@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAccountVaultBalances, resetAccountVaultBalances } from "../../../lib/vaultLedger";
+import { getAccountVaultBalances, resetAccountVaultBalances, syncAccountVaultBalances } from "../../../lib/vaultLedger";
 
 const RPC_ENDPOINTS = [
   "https://test.rpc.fastnear.com",
@@ -102,7 +102,14 @@ export async function GET(req: Request) {
 
     // Dual-vault partition accounting
     if (searchParams.get("calibrate") === "true") {
-      resetAccountVaultBalances(accountId, 1.00, 0.94);
+      resetAccountVaultBalances(accountId, 9.00, 2.94);
+    }
+    const syncOmniUsdc = searchParams.get("syncOmniUsdc");
+    const syncNusd = searchParams.get("syncNusd");
+    if (syncOmniUsdc !== null || syncNusd !== null) {
+      const parsedOmni = syncOmniUsdc !== null ? parseFloat(syncOmniUsdc) : undefined;
+      const parsedNusd = syncNusd !== null ? parseFloat(syncNusd) : undefined;
+      syncAccountVaultBalances(accountId, parsedNusd, parsedOmni);
     }
     let partition = getAccountVaultBalances(accountId);
 

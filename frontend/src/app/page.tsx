@@ -107,7 +107,10 @@ export default function Home() {
   } | null>(null);
   const [recipientAddress, setRecipientAddress] = useState("");
 
-  const refreshAllBalances = async (acc = connectedAccount) => {
+  const refreshAllBalances = async (
+    acc = connectedAccount,
+    overrides?: { nusd?: string; omniUsdc?: string; usdc?: number }
+  ) => {
     if (acc.startsWith("0x")) {
       if (typeof window !== "undefined" && (window as any).ethereum) {
         try {
@@ -132,14 +135,64 @@ export default function Home() {
     }
 
     try {
-      const res = await fetch(`/api/balances?account=${acc}`);
+      // Sovereign client-side balance cache
+      let localBalances: { nusd?: string; omniUsdc?: string; usdc?: number } = {};
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem(`omniyield_balances_${acc}`);
+          if (raw) localBalances = JSON.parse(raw);
+        } catch (_) {}
+      }
+
+      const syncOmni = overrides?.omniUsdc ?? localBalances.omniUsdc;
+      const syncNusd = overrides?.nusd ?? localBalances.nusd;
+
+      let url = `/api/balances?account=${acc}`;
+      if (syncOmni !== undefined) url += `&syncOmniUsdc=${syncOmni}`;
+      if (syncNusd !== undefined) url += `&syncNusd=${syncNusd}`;
+
+      const res = await fetch(url);
       const data = await res.json();
       if (data && !data.error) {
         setNearBalance(data.nearBalance || "0.00");
-        setUsdcBalance(data.usdcBalance ?? 0);
-        setNusdBalance(data.nusdBalance || "0.00");
-        if (data.omniUsdcBalance !== undefined) {
-          setOmniUsdcBalance(data.omniUsdcBalance);
+
+        // USDC
+        const finalUsdc =
+          overrides?.usdc !== undefined
+            ? overrides.usdc
+            : typeof localBalances.usdc === "number"
+            ? localBalances.usdc
+            : data.usdcBalance ?? 0;
+        setUsdcBalance(finalUsdc);
+
+        // NUSD
+        const serverNusd = parseFloat(data.nusdBalance || "0.00") || 0;
+        const localNusd = localBalances.nusd !== undefined ? parseFloat(localBalances.nusd) : 0;
+        const finalNusd =
+          overrides?.nusd !== undefined
+            ? overrides.nusd
+            : Math.max(serverNusd, localNusd).toFixed(2);
+        setNusdBalance(finalNusd);
+
+        // OmniUSDC
+        const serverOmni = parseFloat(data.omniUsdcBalance || "0.00") || 0;
+        const localOmni = localBalances.omniUsdc !== undefined ? parseFloat(localBalances.omniUsdc) : 0;
+        const finalOmni =
+          overrides?.omniUsdc !== undefined
+            ? overrides.omniUsdc
+            : Math.max(serverOmni, localOmni).toFixed(2);
+        setOmniUsdcBalance(finalOmni);
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem(
+            `omniyield_balances_${acc}`,
+            JSON.stringify({
+              nusd: finalNusd,
+              omniUsdc: finalOmni,
+              usdc: finalUsdc,
+              updatedAt: Date.now(),
+            })
+          );
         }
       }
     } catch (e) {
@@ -150,6 +203,20 @@ export default function Home() {
   const handleClaimFaucet = () => {
     const newBal = usdcBalance + 20;
     setUsdcBalance(newBal);
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(`omniyield_balances_${connectedAccount}`);
+        const parsed = raw ? JSON.parse(raw) : {};
+        localStorage.setItem(
+          `omniyield_balances_${connectedAccount}`,
+          JSON.stringify({
+            ...parsed,
+            usdc: newBal,
+            updatedAt: Date.now(),
+          })
+        );
+      } catch (_) {}
+    }
     setLogs((prev) => [
       `[${new Date().toLocaleTimeString()}] 💧 Circle Testnet Standard: +20.00 USDC credited to ${connectedAccount}! Available: $${newBal.toLocaleString()} USDC.`,
       ...prev,
@@ -167,6 +234,18 @@ export default function Home() {
         setConnectedWallet("MyNearWallet");
         localStorage.setItem("omniyield_wallet_account", urlAccountId);
         localStorage.setItem("omniyield_wallet_provider", "MyNearWallet");
+
+        // Seed from local storage if available
+        try {
+          const raw = localStorage.getItem(`omniyield_balances_${urlAccountId}`);
+          if (raw) {
+            const b = JSON.parse(raw);
+            if (b.omniUsdc) setOmniUsdcBalance(b.omniUsdc);
+            if (b.nusd) setNusdBalance(b.nusd);
+            if (typeof b.usdc === "number") setUsdcBalance(b.usdc);
+          }
+        } catch (_) {}
+
         refreshAllBalances(urlAccountId);
         window.history.replaceState({}, document.title, window.location.pathname);
         setLogs((prev) => [
@@ -180,6 +259,18 @@ export default function Home() {
         setIsConnected(true);
         setConnectedAccount(initialAccount);
         setConnectedWallet(savedProvider || "NEAR Testnet");
+
+        // Seed from local storage if available
+        try {
+          const raw = localStorage.getItem(`omniyield_balances_${initialAccount}`);
+          if (raw) {
+            const b = JSON.parse(raw);
+            if (b.omniUsdc) setOmniUsdcBalance(b.omniUsdc);
+            if (b.nusd) setNusdBalance(b.nusd);
+            if (typeof b.usdc === "number") setUsdcBalance(b.usdc);
+          }
+        } catch (_) {}
+
         refreshAllBalances(initialAccount);
       }
       const savedTheme = localStorage.getItem("omniyield_theme");
@@ -480,23 +571,51 @@ export default function Home() {
         ...prev,
       ]);
 
+      let nextOmni = omniUsdcBalance;
+      let nextNusd = nusdBalance;
+      let nextUsdc = usdcBalance;
+
       if (activeVault === "all-weather") {
         if (activeTab === "deposit") {
           const expectedShares = (numAmount / currentSharePrice).toFixed(2);
-          setOmniUsdcBalance((prev) => (Number(prev) + Number(expectedShares)).toFixed(2));
+          nextOmni = (Number(omniUsdcBalance) + Number(expectedShares)).toFixed(2);
+          nextUsdc = Math.max(0, usdcBalance - numAmount);
         } else {
-          setOmniUsdcBalance((prev) => Math.max(0, Number(prev) - numAmount).toFixed(2));
+          nextOmni = Math.max(0, Number(omniUsdcBalance) - numAmount).toFixed(2);
+          nextUsdc = usdcBalance + numAmount;
         }
+        setOmniUsdcBalance(nextOmni);
+        setUsdcBalance(nextUsdc);
       } else {
         if (activeTab === "deposit") {
           const expectedShares = (numAmount / currentSharePrice).toFixed(2);
-          setNusdBalance((prev) => (Number(prev) + Number(expectedShares)).toFixed(2));
+          nextNusd = (Number(nusdBalance) + Number(expectedShares)).toFixed(2);
+          nextUsdc = Math.max(0, usdcBalance - numAmount);
         } else {
-          setNusdBalance((prev) => Math.max(0, Number(prev) - numAmount).toFixed(2));
+          nextNusd = Math.max(0, Number(nusdBalance) - numAmount).toFixed(2);
+          nextUsdc = usdcBalance + numAmount;
         }
+        setNusdBalance(nextNusd);
+        setUsdcBalance(nextUsdc);
       }
 
-      await refreshAllBalances(connectedAccount);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          `omniyield_balances_${connectedAccount}`,
+          JSON.stringify({
+            nusd: nextNusd,
+            omniUsdc: nextOmni,
+            usdc: nextUsdc,
+            updatedAt: Date.now(),
+          })
+        );
+      }
+
+      await refreshAllBalances(connectedAccount, {
+        nusd: nextNusd,
+        omniUsdc: nextOmni,
+        usdc: nextUsdc,
+      });
     } catch (err: any) {
       alert(`Transaction Error: ${err.message}`);
       setLogs((prev) => [
@@ -748,12 +867,30 @@ export default function Home() {
                   omniUsdcBalance={omniUsdcBalance}
                   nearBalance={nearBalance}
                   onBalanceUpdate={(vault, amount) => {
+                    let nextOmni = omniUsdcBalance;
+                    let nextNusd = nusdBalance;
+                    const nextUsdc = Math.max(0, usdcBalance - amount);
+
                     if (vault === "all-weather") {
-                      setOmniUsdcBalance((prev) => (Number(prev) + amount).toFixed(2));
+                      nextOmni = (Number(omniUsdcBalance) + amount).toFixed(2);
+                      setOmniUsdcBalance(nextOmni);
                     } else {
-                      setNusdBalance((prev) => (Number(prev) + amount).toFixed(2));
+                      nextNusd = (Number(nusdBalance) + amount).toFixed(2);
+                      setNusdBalance(nextNusd);
                     }
-                    setUsdcBalance((prev) => Math.max(0, prev - amount));
+                    setUsdcBalance(nextUsdc);
+
+                    if (typeof window !== "undefined") {
+                      localStorage.setItem(
+                        `omniyield_balances_${connectedAccount}`,
+                        JSON.stringify({
+                          nusd: nextNusd,
+                          omniUsdc: nextOmni,
+                          usdc: nextUsdc,
+                          updatedAt: Date.now(),
+                        })
+                      );
+                    }
                   }}
                   onRefreshBalances={() => refreshAllBalances(connectedAccount)}
                   onLog={(msg) => setLogs((prev) => [msg, ...prev])}

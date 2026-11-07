@@ -96,3 +96,4 @@ In accordance with NEAR Foundation's *"The Right to Run"* architectural principl
 - **Pyth Network (NEAR)**: Real-time high-frequency sub-second price feed for BTC, ETH, NEAR, PAXG.
 - **Coinbase / CoinGecko REST Aggregator**: Multi-source oracle fallback for altcoins (AKT, SUI, RENDER, TAO).
 - **Public RPC**: `https://rpc.testnet.near.org`
+

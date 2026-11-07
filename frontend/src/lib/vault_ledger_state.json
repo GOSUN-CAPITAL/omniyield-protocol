@@ -1,7 +1,7 @@
 {
   "dao.omniyield-vault.testnet": {
     "nusd": 9,
-    "omniUsdc": 0.94
+    "omniUsdc": 2.94
   },
   "allocator.omniyield-vault.testnet": {
     "nusd": 7,

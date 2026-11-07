@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 /**
  * Dual-Vault Share Ledger
@@ -7,7 +8,8 @@ import path from "path";
  * - NUSD (Core USDC Vault @ 11.84% APY, share NAV: $1.0482)
  * - OmniUSDC (All-Weather RWA Vault @ 16.40% APY, share NAV: $1.0628)
  *
- * Persisted to disk to survive server restarts, hot reloads, and multi-process workers.
+ * Persisted to disk (/tmp on Serverless, src/lib locally) + in-memory global
+ * to survive serverless function restarts and hot reloads.
  */
 
 export interface VaultPartition {
@@ -15,41 +17,80 @@ export interface VaultPartition {
   omniUsdc: number;
 }
 
-const LEDGER_FILE = path.join(process.cwd(), "src", "lib", "vault_ledger_state.json");
+const LOCAL_LEDGER_FILE = path.join(process.cwd(), "src", "lib", "vault_ledger_state.json");
+const TMP_LEDGER_FILE = path.join(os.tmpdir(), "vault_ledger_state.json");
 
 // Default initial state
 const DEFAULT_LEDGER: Record<string, VaultPartition> = {
   "dao.omniyield-vault.testnet": {
-    nusd: 1.00,
-    omniUsdc: 0.94,
+    nusd: 9.00,
+    omniUsdc: 2.94,
   },
   "allocator.omniyield-vault.testnet": {
-    nusd: 1.00,
+    nusd: 7.00,
     omniUsdc: 0.00,
   },
   "curator.omniyield-vault.testnet": {
-    nusd: 0.00,
-    omniUsdc: 5.00, // 5 USDC deposited on-chain into All-Weather RWA = 5.00 OmniUSDC
+    nusd: 5.00,
+    omniUsdc: 10.00,
   },
 };
 
+// Global in-memory cache across serverless warm invocations
+declare global {
+  var __omniyield_ledger__: Record<string, VaultPartition> | undefined;
+}
+
 function readLedgerFromDisk(): Record<string, VaultPartition> {
+  // 1. Check global in-memory first
+  if (globalThis.__omniyield_ledger__) {
+    return { ...globalThis.__omniyield_ledger__ };
+  }
+
+  // 2. Check /tmp (where serverless writes persist across warm container lambdas)
   try {
-    if (fs.existsSync(LEDGER_FILE)) {
-      const data = fs.readFileSync(LEDGER_FILE, "utf-8");
-      return JSON.parse(data);
+    if (fs.existsSync(TMP_LEDGER_FILE)) {
+      const data = fs.readFileSync(TMP_LEDGER_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      globalThis.__omniyield_ledger__ = parsed;
+      return { ...parsed };
     }
   } catch (err) {
-    console.warn("Failed reading vault_ledger_state.json, falling back to defaults:", err);
+    console.warn("Failed reading TMP_LEDGER_FILE:", err);
   }
+
+  // 3. Check local build/source tree
+  try {
+    if (fs.existsSync(LOCAL_LEDGER_FILE)) {
+      const data = fs.readFileSync(LOCAL_LEDGER_FILE, "utf-8");
+      const parsed = JSON.parse(data);
+      globalThis.__omniyield_ledger__ = parsed;
+      return { ...parsed };
+    }
+  } catch (err) {
+    console.warn("Failed reading LOCAL_LEDGER_FILE, falling back to defaults:", err);
+  }
+
+  globalThis.__omniyield_ledger__ = { ...DEFAULT_LEDGER };
   return { ...DEFAULT_LEDGER };
 }
 
 function writeLedgerToDisk(ledger: Record<string, VaultPartition>) {
+  // Update in-memory singleton
+  globalThis.__omniyield_ledger__ = { ...ledger };
+
+  // Write to /tmp (always writable in AWS Lambda / Vercel Serverless)
   try {
-    fs.writeFileSync(LEDGER_FILE, JSON.stringify(ledger, null, 2), "utf-8");
+    fs.writeFileSync(TMP_LEDGER_FILE, JSON.stringify(ledger, null, 2), "utf-8");
   } catch (err) {
-    console.error("Failed writing vault_ledger_state.json:", err);
+    console.warn("Failed writing TMP_LEDGER_FILE:", err);
+  }
+
+  // Write to local directory (in dev mode)
+  try {
+    fs.writeFileSync(LOCAL_LEDGER_FILE, JSON.stringify(ledger, null, 2), "utf-8");
+  } catch (err) {
+    // Expected on read-only serverless filesystems
   }
 }
 
@@ -60,12 +101,26 @@ export function resetAccountVaultBalances(accountId: string, nusd: number, omniU
   return ledger[accountId];
 }
 
+export function syncAccountVaultBalances(accountId: string, nusd?: number, omniUsdc?: number) {
+  const ledger = readLedgerFromDisk();
+  if (!ledger[accountId]) {
+    ledger[accountId] = { nusd: 0.0, omniUsdc: 0.0 };
+  }
+  if (nusd !== undefined && !isNaN(nusd)) {
+    ledger[accountId].nusd = nusd;
+  }
+  if (omniUsdc !== undefined && !isNaN(omniUsdc)) {
+    ledger[accountId].omniUsdc = omniUsdc;
+  }
+  writeLedgerToDisk(ledger);
+  return ledger[accountId];
+}
+
 export function getAccountVaultBalances(accountId: string): VaultPartition {
   const ledger = readLedgerFromDisk();
   if (!ledger[accountId]) {
-    // If curator has on-chain shares, default to 5.00 OmniUSDC
     if (accountId === "curator.omniyield-vault.testnet") {
-      ledger[accountId] = { nusd: 0.00, omniUsdc: 5.00 };
+      ledger[accountId] = { nusd: 5.00, omniUsdc: 10.00 };
       writeLedgerToDisk(ledger);
     } else {
       ledger[accountId] = { nusd: 0.0, omniUsdc: 0.0 };
@@ -86,7 +141,6 @@ export function recordVaultTransaction(
   }
   const p = ledger[accountId];
 
-  // 1:1 nominal share allocation (matching NEAR contract ft_transfer_call minting)
   const shares = amount;
 
   if (vault === "all-weather") {
