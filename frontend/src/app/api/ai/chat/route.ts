@@ -587,6 +587,80 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Ultimate Safety Net: If AI produced text but actionCard was omitted, synthesize it!
+    if (!actionCard) {
+      const qLower = prompt.toLowerCase();
+      if (
+        qLower.includes("赎回") ||
+        qLower.includes("提现") ||
+        qLower.includes("取出") ||
+        qLower.includes("取回") ||
+        qLower.includes("提取") ||
+        qLower.includes("出金") ||
+        qLower.includes("卖出") ||
+        qLower.includes("卖") ||
+        qLower.includes("变现") ||
+        qLower.includes("兑现") ||
+        qLower.includes("兑出") ||
+        qLower.includes("withdraw") ||
+        qLower.includes("redeem") ||
+        qLower.includes("sell")
+      ) {
+        const isAllWeather = qLower.includes("全天候") || qLower.includes("omniusdc");
+        const matchNum = prompt.match(/(\d+(?:\.\d+)?)/);
+        const amount = matchNum ? parseFloat(matchNum[1]) : 2;
+        const vault = isAllWeather ? "all-weather" : "usdc";
+        const receiptToken = isAllWeather ? "OmniUSDC" : "NUSD";
+        const vaultName = isAllWeather ? "OmniYield All-Weather RWA (OmniUSDC)" : "GOSUN OmniYield USDC (NUSD)";
+
+        actionCard = {
+          id: `card-${Date.now()}`,
+          type: "withdraw",
+          title: lang === "zh" ? `⚡ 一键赎回 ${amount} ${receiptToken} 为现金` : `⚡ Instant Redeem ${amount} ${receiptToken}`,
+          description:
+            lang === "zh"
+              ? `销毁 ${amount} ${receiptToken} 金库份额，按实时净值结算 USDC 至您的 NEAR 钱包。`
+              : `Burns ${amount} ${receiptToken} shares and releases USDC to connected wallet.`,
+          amount,
+          vault,
+          vaultName,
+          apy: "0% 罚息",
+          projectedReturn: `~$${amount} USDC 到账`,
+          buttonText: lang === "zh" ? "⚡ 确认一键签名赎回 (Instant Redeem)" : "⚡ One-Click Redeem",
+        };
+      } else if (
+        qLower.includes("存") ||
+        qLower.includes("deposit") ||
+        qLower.includes("申购") ||
+        qLower.includes("买") ||
+        qLower.includes("买入") ||
+        qLower.includes("加仓") ||
+        qLower.includes("充值") ||
+        qLower.includes("buy")
+      ) {
+        const isAllWeather = qLower.includes("全天候") || qLower.includes("omniusdc");
+        const matchNum = prompt.match(/(\d+(?:\.\d+)?)/);
+        const amount = matchNum ? parseFloat(matchNum[1]) : 500;
+        const vault = isAllWeather ? "all-weather" : "usdc";
+        const vaultName = isAllWeather ? "OmniYield All-Weather RWA (OmniUSDC)" : "GOSUN OmniYield USDC (NUSD)";
+        const apy = isAllWeather ? "16.80% APY" : "12.40% APY";
+        actionCard = {
+          id: `card-${Date.now()}`,
+          type: "deposit",
+          title: lang === "zh" ? `⚡ 一键存入 ${amount} USDC 到${isAllWeather ? "全天候金库" : "核心金库"}` : `⚡ Deposit ${amount} USDC`,
+          description:
+            lang === "zh"
+              ? `向 NEAR 智能合约存入 ${amount} USDC，铸造对应份额并开启秒级实时复利`
+              : `Deposit ${amount} USDC into vault.`,
+          amount,
+          vault,
+          vaultName,
+          apy,
+          buttonText: lang === "zh" ? "⚡ 确认一键签名存入" : "⚡ One-Click Deposit",
+        };
+      }
+    }
+
     return NextResponse.json({
       sender: "ai",
       tier,
