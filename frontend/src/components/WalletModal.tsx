@@ -749,7 +749,24 @@ export function AccountDrawer({
             </div>
 
             {/* Contract Import / Cross-Chain Receipt Tip */}
-            {isEVM ? (
+            {isSolana ? (
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-xs text-purple-300 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold flex items-center space-x-1.5 text-purple-400">
+                    <span>⚡</span>
+                    <span>{lang === "zh" ? "Solana 全链抽象意图凭证" : "Solana Cross-Chain Receipt"}</span>
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">
+                    SPL / Intents
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  {lang === "zh"
+                    ? "您的 NUSD / OmniUSDC 金库份额已通过全链抽象锚定至您的 Phantom 钱包。赎回时无需跨链桥，原生 USDC 秒级原路打回您的 Solana 钱包！"
+                    : "Your NUSD & OmniUSDC shares are bound to your Solana Phantom address via Chain Abstraction. Zero bridge friction!"}
+                </p>
+              </div>
+            ) : isEVM ? (
               <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-300 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold flex items-center space-x-1.5 text-amber-400">

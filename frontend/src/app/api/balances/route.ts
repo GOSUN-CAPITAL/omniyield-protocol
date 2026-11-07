@@ -167,7 +167,10 @@ async function querySolanaOnChainBalances(address: string) {
 
       if (solRes?.result?.value !== undefined) {
         const lamports = BigInt(solRes.result.value);
-        solGas = (Number(lamports) / 1e9).toFixed(4);
+        const currentSol = (Number(lamports) / 1e9).toFixed(4);
+        if (parseFloat(currentSol) > 0 || solGas === "0.0000") {
+          solGas = currentSol;
+        }
       }
 
       // 2. Query Specific USDC SPL Mints
@@ -230,7 +233,7 @@ async function querySolanaOnChainBalances(address: string) {
         } catch (_) {}
       }
 
-      if (usdc > 0 || parseFloat(solGas) > 0) break;
+      if (usdc > 0 && parseFloat(solGas) > 0) break;
     } catch (err) {
       console.warn(`Solana query error on ${rpc}:`, err);
     }

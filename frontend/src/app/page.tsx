@@ -162,8 +162,9 @@ export default function Home() {
         } catch (_) {}
       }
 
-      const syncOmni = overrides?.omniUsdc ?? localBalances.omniUsdc;
-      const syncNusd = overrides?.nusd ?? localBalances.nusd;
+      // Only sync dual-vault partitions when explicitly provided by an active transaction override
+      const syncOmni = overrides?.omniUsdc;
+      const syncNusd = overrides?.nusd;
 
       let url = `/api/balances?account=${acc}&chain=${activeChain}`;
       if (syncOmni !== undefined) url += `&syncOmniUsdc=${syncOmni}`;
@@ -202,7 +203,7 @@ export default function Home() {
         if (overrides?.nusd !== undefined) {
           finalNusd = overrides.nusd;
         } else if (isCrossChainAccount) {
-          finalNusd = localBalances.nusd !== undefined ? localBalances.nusd : (data.nusdBalance || "0.00");
+          finalNusd = data.nusdBalance || "0.00";
         } else {
           const serverNusd = parseFloat(data.nusdBalance || "0.00") || 0;
           const localNusd = localBalances.nusd !== undefined ? parseFloat(localBalances.nusd) : 0;
@@ -215,7 +216,7 @@ export default function Home() {
         if (overrides?.omniUsdc !== undefined) {
           finalOmni = overrides.omniUsdc;
         } else if (isCrossChainAccount) {
-          finalOmni = localBalances.omniUsdc !== undefined ? localBalances.omniUsdc : (data.omniUsdcBalance || "0.00");
+          finalOmni = data.omniUsdcBalance || "0.00";
         } else {
           const serverOmni = parseFloat(data.omniUsdcBalance || "0.00") || 0;
           const localOmni = localBalances.omniUsdc !== undefined ? parseFloat(localBalances.omniUsdc) : 0;
@@ -384,10 +385,10 @@ export default function Home() {
     }
     setNusdBalance("0.00");
     setOmniUsdcBalance("0.00");
-    setUsdcBalance(0);
     try {
       await fetch(`/api/balances?account=${connectedAccount}&reset=true`);
     } catch (_) {}
+    await refreshAllBalances(connectedAccount, { nusd: "0.00", omniUsdc: "0.00" });
     setLogs((prev) => [
       `[${new Date().toLocaleTimeString()}] 🧹 Balances and local storage reset to 0 for ${connectedAccount}.`,
       ...prev,
