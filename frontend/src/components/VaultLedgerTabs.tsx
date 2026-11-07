@@ -23,6 +23,8 @@ interface VaultLedgerTabsProps {
   lang?: "en" | "zh";
   theme?: "dark" | "beige";
   currentSharePrice?: number;
+  userShares?: number;
+  connectedAccount?: string;
 }
 
 export function VaultLedgerTabs({
@@ -30,6 +32,8 @@ export function VaultLedgerTabs({
   lang = "en",
   theme = "beige",
   currentSharePrice = 1.0628,
+  userShares = 0,
+  connectedAccount = "",
 }: VaultLedgerTabsProps) {
   const [activeTab, setActiveTab] = useState<LedgerTabType>("depositors");
   const [sortBy, setSortBy] = useState<"balance" | "value">("value");
@@ -39,6 +43,17 @@ export function VaultLedgerTabs({
 
   // 1. Depositors Data
   const depositorsList = [
+    ...(userShares > 0 && connectedAccount
+      ? [
+          {
+            address: connectedAccount,
+            label: isZh ? "您的钱包 (当前连接 · 实时份额)" : "Your Wallet (Connected · Live)",
+            shares: userShares,
+            chain: connectedAccount.startsWith("0x") ? "Arbitrum" : "NEAR",
+            isSelf: true,
+          },
+        ]
+      : []),
     {
       address: "dao.omniyield-vault.testnet",
       label: isZh ? "DAO 协议国库 (Council Reserve)" : "DAO Treasury Reserve",

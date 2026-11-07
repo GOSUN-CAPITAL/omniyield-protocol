@@ -41,6 +41,27 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing account query parameter" }, { status: 400 });
   }
 
+  // Handle EVM (MetaMask / Arbitrum) Accounts
+  if (accountId.startsWith("0x")) {
+    const syncOmniUsdc = searchParams.get("syncOmniUsdc");
+    const syncNusd = searchParams.get("syncNusd");
+    if (syncOmniUsdc !== null || syncNusd !== null) {
+      const parsedOmni = syncOmniUsdc !== null ? parseFloat(syncOmniUsdc) : undefined;
+      const parsedNusd = syncNusd !== null ? parseFloat(syncNusd) : undefined;
+      syncAccountVaultBalances(accountId, parsedNusd, parsedOmni);
+    }
+    const partition = getAccountVaultBalances(accountId);
+    return NextResponse.json({
+      accountId,
+      nearBalance: "0.50",
+      usdcBalance: 2500,
+      nusdBalance: partition.nusd.toFixed(2),
+      omniUsdcBalance: partition.omniUsdc.toFixed(2),
+      onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),
+      isEVM: true,
+    });
+  }
+
   try {
     const argsBase64 = Buffer.from(JSON.stringify({ account_id: accountId })).toString("base64");
 

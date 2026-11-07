@@ -745,18 +745,66 @@ export function AccountDrawer({
               </p>
             </div>
 
-            {/* Contract Import Tip */}
-            <div className="p-2.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-[11px] text-cyan-300 space-y-1">
-              <span className="font-semibold block text-cyan-400">
-                {lang === "zh" ? "NEAR 钱包导入金库凭证合约：" : "Import Vault Token in NEAR Wallet:"}
-              </span>
-              <p className="text-slate-400 leading-relaxed text-[10px]">
-                {lang === "zh" ? "在钱包中点击 + Import Token，输入：" : "In wallet click + Import Token, enter:"}{" "}
-                <span className="block mt-1 font-mono text-[10px] text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 select-all">
-                  omniyield-vault.testnet
+            {/* Contract Import / Cross-Chain Receipt Tip */}
+            {isEVM ? (
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-300 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold flex items-center space-x-1.5 text-amber-400">
+                    <span>🦊</span>
+                    <span>{lang === "zh" ? "Arbitrum 跨链主权凭证" : "Arbitrum Cross-Chain Receipt"}</span>
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">
+                    EIP-712 Intents
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  {lang === "zh"
+                    ? "您的 NUSD / OmniUSDC 金库份额已通过全链抽象绑定至您的 EVM 地址。赎回时无需跨链桥，原生 USDC 秒级原路打回您的 Arbitrum 钱包！"
+                    : "Your NUSD & OmniUSDC shares are bound to your EVM address via Chain Abstraction. Redeem natively back to Arbitrum with zero bridge friction!"}
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (typeof window !== "undefined" && (window as any).ethereum) {
+                      try {
+                        await (window as any).ethereum.request({
+                          method: "wallet_watchAsset",
+                          params: {
+                            type: "ERC20",
+                            options: {
+                              address: "0x8922f3E67fD5e8F8Eb17C3D5A504B6E7d686f0A8",
+                              symbol: "NUSD",
+                              decimals: 6,
+                              image: "https://omniyield.3691618.xyz/favicon.ico",
+                            },
+                          },
+                        });
+                      } catch (err) {
+                        console.warn(err);
+                      }
+                    } else {
+                      alert("MetaMask is not detected.");
+                    }
+                  }}
+                  className="w-full py-1.5 px-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] transition flex items-center justify-center space-x-1 shadow-sm cursor-pointer"
+                >
+                  <span>🦊</span>
+                  <span>{lang === "zh" ? "在 MetaMask 中添加 NUSD 追踪凭证" : "Watch NUSD in MetaMask"}</span>
+                </button>
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-xl bg-cyan-950/20 border border-cyan-500/20 text-[11px] text-cyan-300 space-y-1">
+                <span className="font-semibold block text-cyan-400">
+                  {lang === "zh" ? "NEAR 钱包导入金库凭证合约：" : "Import Vault Token in NEAR Wallet:"}
                 </span>
-              </p>
-            </div>
+                <p className="text-slate-400 leading-relaxed text-[10px]">
+                  {lang === "zh" ? "在钱包中点击 + Import Token，输入：" : "In wallet click + Import Token, enter:"}{" "}
+                  <span className="block mt-1 font-mono text-[10px] text-cyan-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 select-all">
+                    omniyield-vault.testnet
+                  </span>
+                </p>
+              </div>
+            )}
 
             <div className="pt-1 flex items-center justify-between text-xs">
               <span className="text-slate-400">{lang === "zh" ? "钱包服务商:" : "Wallet Provider:"}</span>

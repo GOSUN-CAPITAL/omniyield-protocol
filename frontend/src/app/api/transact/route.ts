@@ -69,6 +69,7 @@ export async function POST(req: Request) {
 
     const effectiveAccount =
       accountId && KNOWN_KEYS[accountId] ? accountId : "dao.omniyield-vault.testnet";
+    const beneficiaryAccount = accountId || effectiveAccount;
 
     const numAmount = Number(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
@@ -112,7 +113,7 @@ export async function POST(req: Request) {
           const originProof = generatePseudoChainTx(originChain);
 
           // Update partitioned ledger for dual-vault accounting
-          recordVaultTransaction(effectiveAccount, "deposit", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
+          recordVaultTransaction(beneficiaryAccount, "deposit", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
 
           return NextResponse.json({
             success: true,
@@ -157,7 +158,7 @@ export async function POST(req: Request) {
           const destProof = generatePseudoChainTx(destChain);
 
           // Update partitioned ledger for dual-vault accounting
-          recordVaultTransaction(effectiveAccount, "withdraw", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
+          recordVaultTransaction(beneficiaryAccount, "withdraw", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
 
           const targetAddress =
             recipientAddress.trim() ||
@@ -199,7 +200,7 @@ export async function POST(req: Request) {
     const originProof = generatePseudoChainTx(originChain);
 
     // Update partitioned ledger for dual-vault accounting
-    recordVaultTransaction(effectiveAccount, action === "withdraw" ? "withdraw" : "deposit", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
+    recordVaultTransaction(beneficiaryAccount, action === "withdraw" ? "withdraw" : "deposit", vault === "all-weather" ? "all-weather" : "usdc", numAmount);
 
     return NextResponse.json({
       success: true,

@@ -111,6 +111,7 @@ export default function Home() {
     acc = connectedAccount,
     overrides?: { nusd?: string; omniUsdc?: string; usdc?: number }
   ) => {
+    let evmEthGas: string | null = null;
     if (acc.startsWith("0x")) {
       if (typeof window !== "undefined" && (window as any).ethereum) {
         try {
@@ -119,19 +120,12 @@ export default function Home() {
             params: [acc, "latest"],
           });
           const wei = BigInt(balanceHex);
-          const eth = (Number(wei / BigInt("1000000000000000")) / 1000).toFixed(4);
-          setNearBalance(eth);
-          setUsdcBalance(2500);
-          setNusdBalance("0.00");
-          return;
+          evmEthGas = (Number(wei / BigInt("1000000000000000")) / 1000).toFixed(4);
         } catch (e) {
           console.error("EVM balance error:", e);
         }
       }
-      setNearBalance("0.50");
-      setUsdcBalance(2500);
-      setNusdBalance("0.00");
-      return;
+      setNearBalance(evmEthGas || "0.050");
     }
 
     try {
@@ -154,15 +148,18 @@ export default function Home() {
       const res = await fetch(url);
       const data = await res.json();
       if (data && !data.error) {
-        setNearBalance(data.nearBalance || "0.00");
+        if (!acc.startsWith("0x")) {
+          setNearBalance(data.nearBalance || "0.00");
+        }
 
         // USDC
+        const defaultInitialUsdc = acc.startsWith("0x") ? 100 : (data.usdcBalance ?? 0);
         const finalUsdc =
           overrides?.usdc !== undefined
             ? overrides.usdc
             : typeof localBalances.usdc === "number"
             ? localBalances.usdc
-            : data.usdcBalance ?? 0;
+            : defaultInitialUsdc;
         setUsdcBalance(finalUsdc);
 
         // NUSD
@@ -446,7 +443,8 @@ export default function Home() {
 
     if (activeTab === "deposit") {
       if (numAmount > usdcBalance) {
-        alert(`Insufficient USDC balance! You have ${usdcBalance.toLocaleString()} USDC on NEAR Testnet.`);
+        const chainName = connectedAccount.startsWith("0x") ? sourceChain : "NEAR Testnet";
+        alert(`Insufficient USDC balance! You have ${usdcBalance.toLocaleString()} USDC on ${chainName}. Use the faucet button (+20 USDC) to top up!`);
         return;
       }
     } else {
@@ -491,7 +489,7 @@ export default function Home() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            accountId: "dao.omniyield-vault.testnet",
+            accountId: connectedAccount,
             action: activeTab,
             amount: numAmount,
             originChain: sourceChain,
@@ -517,7 +515,7 @@ export default function Home() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            accountId: connectedAccount.startsWith("0x") ? "dao.omniyield-vault.testnet" : connectedAccount,
+            accountId: connectedAccount,
             action: activeTab,
             amount: numAmount,
             originChain: sourceChain,
@@ -1123,6 +1121,8 @@ export default function Home() {
                   lang={lang}
                   theme={theme}
                   currentSharePrice={currentSharePrice}
+                  userShares={parseFloat(activeVault === "all-weather" ? omniUsdcBalance : nusdBalance) || 0}
+                  connectedAccount={connectedAccount}
                 />
               </div>
 
