@@ -604,7 +604,7 @@ export default function NearAICopilot({
         };
       }
       // 3. 意图量化操盘手: 申购 NUSD 核心借贷金库 (12.4%)
-      else if ((qLower.includes("nusd") || qLower.includes("核心") || qLower.includes("借贷")) && (qLower.includes("存") || qLower.includes("申购") || qLower.includes("deposit"))) {
+      else if ((qLower.includes("nusd") || qLower.includes("核心") || qLower.includes("借贷")) && (qLower.includes("存") || qLower.includes("申购") || qLower.includes("deposit") || qLower.includes("买") || qLower.includes("充值") || qLower.includes("加仓") || qLower.includes("buy"))) {
         const amount = 500;
         aiReply =
           lang === "zh"
@@ -693,7 +693,7 @@ export default function NearAICopilot({
           buttonText: lang === "zh" ? "⚡ 确认一键收益滚存" : "⚡ Compound Accrued Yield",
         };
       }
-      // 7. 意图量化操盘手: 流动性赎回出金
+      // 7. 意图量化操盘手: 流动性赎回出金 / 卖出
       else if (
         qLower.includes("赎回") ||
         qLower.includes("取出") ||
@@ -701,8 +701,15 @@ export default function NearAICopilot({
         qLower.includes("提取") ||
         qLower.includes("提现") ||
         qLower.includes("出金") ||
+        qLower.includes("卖出") ||
+        qLower.includes("卖") ||
+        qLower.includes("变现") ||
+        qLower.includes("兑现") ||
+        qLower.includes("兑出") ||
+        qLower.includes("退回") ||
         qLower.includes("redeem") ||
-        qLower.includes("withdraw")
+        qLower.includes("withdraw") ||
+        qLower.includes("sell")
       ) {
         const isAllWeather = qLower.includes("全天候") || qLower.includes("omniusdc");
         const numMatch = q.match(/(\d+(?:\.\d+)?)/);

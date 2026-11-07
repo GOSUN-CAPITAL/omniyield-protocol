@@ -157,7 +157,15 @@ export async function POST(req: NextRequest) {
             userQ.includes("取出") ||
             userQ.includes("赎回") ||
             userQ.includes("提现") ||
-            userQ.includes("提取");
+            userQ.includes("提取") ||
+            userQ.includes("卖出") ||
+            userQ.includes("卖") ||
+            userQ.includes("变现") ||
+            userQ.includes("兑现") ||
+            userQ.includes("兑出") ||
+            userQ.includes("出金") ||
+            userQ.includes("sell") ||
+            userQ.includes("cash out");
           const isRebalance =
             parsed.type === "rebalance" ||
             parsed.action === "rebalance" ||
@@ -429,7 +437,17 @@ export async function POST(req: NextRequest) {
       // =======================================================================
       // 2. ⚡ 世界首创意图量化金库操盘手 (Deposit, Rebalance, Compound, Redeem)
       // =======================================================================
-      else if (qLower.includes("存") || qLower.includes("deposit") || qLower.includes("申购")) {
+      else if (
+        qLower.includes("存") ||
+        qLower.includes("deposit") ||
+        qLower.includes("申购") ||
+        qLower.includes("买") ||
+        qLower.includes("买入") ||
+        qLower.includes("加仓") ||
+        qLower.includes("充值") ||
+        qLower.includes("buy") ||
+        qLower.includes("invest")
+      ) {
         const isCore = qLower.includes("核心") || qLower.includes("nusd") || qLower.includes("借贷") || qLower.includes("12.4");
         const matchNum = prompt.match(/(\d+(?:\.\d+)?)/);
         const amount = matchNum ? parseFloat(matchNum[1]) : 500;
@@ -479,32 +497,50 @@ export async function POST(req: NextRequest) {
           projectedReturn: "Sharpe 提升至 2.89",
           buttonText: lang === "zh" ? "⚡ 确认一键执行调仓 (One-Click Rebalance)" : "⚡ Confirm Rebalance",
         };
-      } else if (qLower.includes("赎回") || qLower.includes("提现") || qLower.includes("withdraw") || qLower.includes("redeem") || qLower.includes("取出") || qLower.includes("取回") || qLower.includes("提取") || qLower.includes("出金")) {
+      } else if (
+        qLower.includes("赎回") ||
+        qLower.includes("提现") ||
+        qLower.includes("withdraw") ||
+        qLower.includes("redeem") ||
+        qLower.includes("取出") ||
+        qLower.includes("取回") ||
+        qLower.includes("提取") ||
+        qLower.includes("出金") ||
+        qLower.includes("卖出") ||
+        qLower.includes("卖") ||
+        qLower.includes("变现") ||
+        qLower.includes("兑现") ||
+        qLower.includes("兑出") ||
+        qLower.includes("退回") ||
+        qLower.includes("sell") ||
+        qLower.includes("cash out")
+      ) {
         const isAllWeather = qLower.includes("全天候") || qLower.includes("omniusdc");
         const matchNum = prompt.match(/(\d+(?:\.\d+)?)/);
-        const amount = matchNum ? parseFloat(matchNum[1]) : 100;
+        const amount = matchNum ? parseFloat(matchNum[1]) : 2;
         const vault = isAllWeather ? "all-weather" : "usdc";
-        const vaultName = isAllWeather ? "OmniYield All-Weather RWA (OmniUSDC)" : "OmniYield NUSD Core Vault";
+        const receiptToken = isAllWeather ? "OmniUSDC" : "NUSD";
+        const vaultName = isAllWeather ? "OmniYield All-Weather RWA (OmniUSDC)" : "GOSUN OmniYield USDC (NUSD)";
 
         replyText =
           lang === "zh"
-            ? `💸 **【意图量化金库操盘手 · 金库份额即时赎回】**\n\n已解析您的即时提现意图：\n• 赎回金库: **${vaultName}**\n• 赎回份额: **${amount} 份额**\n• 结算方式: 零滑点提现至钱包地址，本金利息秒级到账。\n\n请确认赎回卡片：`
-            : `💸 **[Quant Vault Trader · Instant Vault Redemption]**\n\nRedeeming ${amount} shares from ${vaultName} with zero slippage. Execution card ready below:`;
+            ? `💸 **【意图量化金库操盘手 · 金库份额即时变现/赎回】**\n\n已成功解析您的自然语言出金意图：\n• 赎回标的: **${amount} ${receiptToken}** (从 ${vaultName})\n• 结算方式: 零滑点即时兑现为 **~${amount} USDC** 原生现金\n• 到账路径: 极速清算返回至当前连接的 NEAR 钱包地址\n\n已为您生成执行卡片，点击下方按钮完成签名即可完成链上销毁与出金：`
+            : `💸 **[Quant Vault Trader · Instant Share Redemption]**\n\nStaged redemption of ${amount} ${receiptToken} shares from ${vaultName} with zero slippage.\nSettles ~${amount} USDC cash to your connected wallet.\n\nReview execution card below:`;
 
         actionCard = {
           id: `card-${Date.now()}`,
           type: "withdraw",
-          title: lang === "zh" ? `⚡ 赎回 ${amount} 份额并提取 USDC` : `⚡ Redeem ${amount} Shares`,
+          title: lang === "zh" ? `⚡ 一键赎回 ${amount} ${receiptToken} 为现金` : `⚡ Redeem ${amount} ${receiptToken}`,
           description:
             lang === "zh"
-              ? `销毁 ${amount} 金库份额，按实时净值结算 USDC 至您的 NEAR 钱包。`
-              : `Burns ${amount} shares and releases USDC to connected wallet.`,
+              ? `销毁 ${amount} ${receiptToken} 金库份额，按实时净值结算 USDC 至您的 NEAR 钱包。`
+              : `Burns ${amount} ${receiptToken} shares and releases USDC to connected wallet.`,
           amount,
           vault,
           vaultName,
           apy: "0% 罚息",
           projectedReturn: `~$${amount} USDC 到账`,
-          buttonText: lang === "zh" ? "⚡ 确认一键赎回 (One-Click Redeem)" : "⚡ Confirm Redeem",
+          buttonText: lang === "zh" ? "⚡ 确认一键签名赎回 (Instant Redeem)" : "⚡ One-Click Redeem",
         };
       }
       // =======================================================================
