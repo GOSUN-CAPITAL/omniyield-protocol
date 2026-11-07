@@ -33,15 +33,113 @@ async function queryRpc(method: string, params: any) {
   return null;
 }
 
+const EVM_NETWORKS: Record<string, { name: string; rpc: string; usdc: string }> = {
+  Arbitrum: {
+    name: "Arbitrum Sepolia",
+    rpc: "https://sepolia-rollup.arbitrum.io/rpc",
+    usdc: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+  },
+  Base: {
+    name: "Base Sepolia",
+    rpc: "https://sepolia.base.org",
+    usdc: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  },
+  Ethereum: {
+    name: "Ethereum Sepolia",
+    rpc: "https://1rpc.io/sepolia",
+    usdc: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+  },
+};
+
+async function queryEvmOnChainBalances(address: string, chainName = "Arbitrum") {
+  const cleanAddr = address.toLowerCase().replace("0x", "").padStart(64, "0");
+  const callData = `0x70a08231${cleanAddr}`;
+  const net = EVM_NETWORKS[chainName] || EVM_NETWORKS.Arbitrum;
+
+  let usdc = 0;
+  let ethGas = "0.0000";
+
+  // 1. Query ERC-20 USDC on target chain
+  try {
+    const res = await fetch(net.rpc, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "eth_call",
+        params: [{ to: net.usdc, data: callData }, "latest"],
+      }),
+      cache: "no-store",
+    }).then((r) => r.json());
+
+    if (res?.result && res.result !== "0x") {
+      const units = BigInt(res.result);
+      usdc = Number(units) / 1_000_000;
+    }
+  } catch (err) {
+    console.warn(`[EVM Balance] ${net.name} USDC query error:`, err);
+  }
+
+  // Fallback: If 0 on target, also check Base or Arbitrum to be helpful
+  if (usdc === 0) {
+    const fallbackKey = chainName === "Arbitrum" ? "Base" : "Arbitrum";
+    const altNet = EVM_NETWORKS[fallbackKey];
+    try {
+      const altRes = await fetch(altNet.rpc, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "eth_call",
+          params: [{ to: altNet.usdc, data: callData }, "latest"],
+        }),
+        cache: "no-store",
+      }).then((r) => r.json());
+      if (altRes?.result && altRes.result !== "0x") {
+        const units = BigInt(altRes.result);
+        const altUsdc = Number(units) / 1_000_000;
+        if (altUsdc > 0) {
+          usdc = altUsdc;
+        }
+      }
+    } catch (_) {}
+  }
+
+  // 2. Query native ETH Gas balance
+  try {
+    const ethRes = await fetch(net.rpc, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 2,
+        method: "eth_getBalance",
+        params: [address, "latest"],
+      }),
+      cache: "no-store",
+    }).then((r) => r.json());
+
+    if (ethRes?.result && ethRes.result !== "0x") {
+      const wei = BigInt(ethRes.result);
+      ethGas = (Number(wei / BigInt("1000000000000000")) / 1000).toFixed(4);
+    }
+  } catch (_) {}
+
+  return { usdc, ethGas };
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const accountId = searchParams.get("account");
+  const chain = searchParams.get("chain") || "Arbitrum";
 
   if (!accountId) {
     return NextResponse.json({ error: "Missing account query parameter" }, { status: 400 });
   }
 
-  // Handle EVM (MetaMask / Arbitrum) Accounts
+  // Handle EVM (MetaMask / Arbitrum / Base) Accounts
   if (accountId.startsWith("0x")) {
     if (searchParams.get("reset") === "true") {
       resetAccountVaultBalances(accountId, 0.00, 0.00);
@@ -53,11 +151,16 @@ export async function GET(req: Request) {
       const parsedNusd = syncNusd !== null ? parseFloat(syncNusd) : undefined;
       syncAccountVaultBalances(accountId, parsedNusd, parsedOmni);
     }
+
+    // Direct Authoritative On-Chain RPC Query for EVM USDC & ETH
+    const evmBal = await queryEvmOnChainBalances(accountId, chain);
     const partition = getAccountVaultBalances(accountId);
+
     return NextResponse.json({
       accountId,
-      nearBalance: "0.0000",
-      usdcBalance: 0,
+      chain,
+      nearBalance: evmBal.ethGas,
+      usdcBalance: evmBal.usdc,
       nusdBalance: partition.nusd.toFixed(2),
       omniUsdcBalance: partition.omniUsdc.toFixed(2),
       onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),

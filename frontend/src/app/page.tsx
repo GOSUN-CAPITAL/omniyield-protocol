@@ -109,15 +109,17 @@ export default function Home() {
 
   const refreshAllBalances = async (
     acc = connectedAccount,
-    overrides?: { nusd?: string; omniUsdc?: string; usdc?: number }
+    overrides?: { nusd?: string; omniUsdc?: string; usdc?: number },
+    chainOverride?: string
   ) => {
     let evmEthGas: string | null = null;
     let evmOnChainUsdc: number | null = null;
+    const activeChain = chainOverride || sourceChain;
 
     if (acc.startsWith("0x")) {
       if (typeof window !== "undefined" && (window as any).ethereum) {
         try {
-          // 1. Real ETH Gas Balance
+          // 1. Real ETH Gas Balance from current provider
           const balanceHex = await (window as any).ethereum.request({
             method: "eth_getBalance",
             params: [acc, "latest"],
@@ -125,14 +127,16 @@ export default function Home() {
           const wei = BigInt(balanceHex);
           evmEthGas = (Number(wei / BigInt("1000000000000000")) / 1000).toFixed(4);
 
-          // 2. Query real on-chain ERC-20 USDC balance on current network (e.g. Arbitrum Sepolia)
+          // 2. Query real on-chain ERC-20 USDC balance
           const cleanAddr = acc.toLowerCase().replace("0x", "").padStart(64, "0");
           const callData = `0x70a08231${cleanAddr}`;
-          const ARB_SEPOLIA_USDC = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+          const targetUsdc = activeChain === "Base" 
+            ? "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+            : "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
           try {
             const usdcHex = await (window as any).ethereum.request({
               method: "eth_call",
-              params: [{ to: ARB_SEPOLIA_USDC, data: callData }, "latest"],
+              params: [{ to: targetUsdc, data: callData }, "latest"],
             });
             if (usdcHex && usdcHex !== "0x" && usdcHex !== "0x0") {
               const rawUsdc = BigInt(usdcHex);
@@ -143,7 +147,9 @@ export default function Home() {
           console.error("EVM balance error:", e);
         }
       }
-      setNearBalance(evmEthGas || "0.0000");
+      if (evmEthGas) {
+        setNearBalance(evmEthGas);
+      }
     }
 
     try {
@@ -159,7 +165,7 @@ export default function Home() {
       const syncOmni = overrides?.omniUsdc ?? localBalances.omniUsdc;
       const syncNusd = overrides?.nusd ?? localBalances.nusd;
 
-      let url = `/api/balances?account=${acc}`;
+      let url = `/api/balances?account=${acc}&chain=${activeChain}`;
       if (syncOmni !== undefined) url += `&syncOmniUsdc=${syncOmni}`;
       if (syncNusd !== undefined) url += `&syncNusd=${syncNusd}`;
 
@@ -168,20 +174,24 @@ export default function Home() {
       if (data && !data.error) {
         if (!acc.startsWith("0x")) {
           setNearBalance(data.nearBalance || "0.00");
+        } else if (data.nearBalance && data.nearBalance !== "0.0000") {
+          setNearBalance(data.nearBalance);
         }
 
-        // Mode A: USDC Balance
+        // Mode A: Authoritative On-Chain USDC Balance from RPC
         let finalUsdc = 0;
         if (overrides?.usdc !== undefined) {
           finalUsdc = overrides.usdc;
         } else if (acc.startsWith("0x")) {
-          if (evmOnChainUsdc !== null && evmOnChainUsdc > 0) {
+          // Priority 1: Direct On-Chain RPC query from server endpoint
+          if (typeof data.usdcBalance === "number" && data.usdcBalance > 0) {
+            finalUsdc = data.usdcBalance;
+          } else if (evmOnChainUsdc !== null && evmOnChainUsdc > 0) {
             finalUsdc = evmOnChainUsdc;
           } else if (typeof localBalances.usdc === "number") {
             finalUsdc = localBalances.usdc;
           } else {
-            // Pure on-chain mode: defaults to 0.00 until claimed from faucet
-            finalUsdc = 0;
+            finalUsdc = data.usdcBalance ?? 0;
           }
         } else {
           finalUsdc = typeof localBalances.usdc === "number" ? localBalances.usdc : (data.usdcBalance ?? 0);
@@ -1236,7 +1246,10 @@ export default function Home() {
                           <button
                             key={chain}
                             type="button"
-                            onClick={() => setSourceChain(chain)}
+                            onClick={() => {
+                              setSourceChain(chain);
+                              refreshAllBalances(connectedAccount, undefined, chain);
+                            }}
                             className={`py-2 text-xs font-semibold rounded-xl border transition cursor-pointer ${
                               sourceChain === chain
                                 ? "item-selected shadow-sm"
