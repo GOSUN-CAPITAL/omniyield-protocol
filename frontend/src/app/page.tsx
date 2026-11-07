@@ -183,15 +183,13 @@ export default function Home() {
         if (overrides?.usdc !== undefined) {
           finalUsdc = overrides.usdc;
         } else if (isCrossChainAccount) {
-          // Priority 1: Direct On-Chain RPC query from server endpoint
-          if (typeof data.usdcBalance === "number" && data.usdcBalance > 0) {
+          // Priority 1: Direct On-Chain RPC query with vault commitment deduction from server endpoint
+          if (typeof data.usdcBalance === "number") {
             finalUsdc = data.usdcBalance;
-          } else if (evmOnChainUsdc !== null && evmOnChainUsdc > 0) {
-            finalUsdc = evmOnChainUsdc;
           } else if (typeof localBalances.usdc === "number") {
             finalUsdc = localBalances.usdc;
           } else {
-            finalUsdc = data.usdcBalance ?? 0;
+            finalUsdc = 0;
           }
         } else {
           finalUsdc = typeof localBalances.usdc === "number" ? localBalances.usdc : (data.usdcBalance ?? 0);

@@ -267,12 +267,15 @@ export async function GET(req: Request) {
     // Direct Authoritative On-Chain RPC Query for EVM USDC & ETH
     const evmBal = await queryEvmOnChainBalances(accountId, chain);
     const partition = getAccountVaultBalances(accountId);
+    const depositedAmount = partition.nusd + partition.omniUsdc;
+    const availableUsdc = Math.max(0, evmBal.usdc - depositedAmount);
 
     return NextResponse.json({
       accountId,
       chain,
       nearBalance: evmBal.ethGas,
-      usdcBalance: evmBal.usdc,
+      usdcBalance: availableUsdc,
+      rawOnChainUsdc: evmBal.usdc,
       nusdBalance: partition.nusd.toFixed(2),
       omniUsdcBalance: partition.omniUsdc.toFixed(2),
       onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),
@@ -295,12 +298,15 @@ export async function GET(req: Request) {
 
     const solBal = await querySolanaOnChainBalances(accountId);
     const partition = getAccountVaultBalances(accountId);
+    const depositedAmount = partition.nusd + partition.omniUsdc;
+    const availableUsdc = Math.max(0, solBal.usdc - depositedAmount);
 
     return NextResponse.json({
       accountId,
       chain: "Solana",
       nearBalance: solBal.solGas, // Native SOL gas
-      usdcBalance: solBal.usdc,
+      usdcBalance: availableUsdc,
+      rawOnChainUsdc: solBal.usdc,
       nusdBalance: partition.nusd.toFixed(2),
       omniUsdcBalance: partition.omniUsdc.toFixed(2),
       onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),
