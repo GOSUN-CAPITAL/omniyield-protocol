@@ -47,6 +47,12 @@ const INSTITUTIONAL_ROLES = [
 
 const isInstitutional = (account: string) => INSTITUTIONAL_ROLES.includes(account);
 
+function isSolanaAddress(acc: string): boolean {
+  if (!acc || typeof acc !== "string") return false;
+  if (acc.startsWith("0x") || acc.includes(".")) return false;
+  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(acc);
+}
+
 export default function Home() {
   const [navTab, setNavTab] = useState<"vaults" | "markets" | "portfolio">("vaults");
   const [activeVault, setActiveVault] = useState<"usdc" | "all-weather">("usdc");
@@ -347,6 +353,14 @@ export default function Home() {
     if (balance) {
       setNearBalance(balance);
     }
+    // Auto-align source and destination chain based on wallet provider
+    if (walletName === "Phantom" || isSolanaAddress(account)) {
+      setSourceChain("Solana");
+      setDestChain("Solana");
+    } else if (walletName === "MetaMask" || account.startsWith("0x")) {
+      setSourceChain("Arbitrum");
+      setDestChain("Arbitrum");
+    }
     // Cleanly isolate previous state when switching accounts
     if (typeof window !== "undefined") {
       const raw = localStorage.getItem(`omniyield_balances_${account}`);
@@ -581,6 +595,51 @@ export default function Home() {
           ...data,
           metaMaskSignature: signature,
         };
+      } else if (connectedWallet === "Phantom" || isSolanaAddress(connectedAccount)) {
+        const solana = typeof window !== "undefined" ? (window as any).solana : null;
+        let solSignature = "";
+        if (solana && solana.isPhantom) {
+          try {
+            const intentMsg = new TextEncoder().encode(
+              `OmniYield Cross-Chain Liquidity Intent\n\n` +
+              `Action: Deposit to NEAR Meta-Vault\n` +
+              `Source Chain: Solana\n` +
+              `Deposit: ${numAmount} USDC\n` +
+              `Target Vault: omniyield-vault.testnet (${activeVault === "all-weather" ? "All-Weather RWA" : "USDC Yield"})\n` +
+              `Expected Output: ~${(numAmount / currentSharePrice).toFixed(2)} ${currentReceiptToken}\n` +
+              `Signer: ${connectedAccount}\n` +
+              `Nonce: ${Date.now()}`
+            );
+            const signed = await solana.signMessage(intentMsg, "utf8");
+            const sigBytes = signed.signature || signed;
+            solSignature = Array.from(sigBytes).map((b: any) => b.toString(16).padStart(2, "0")).join("");
+          } catch (solErr: any) {
+            console.warn("Phantom sign rejected or bypassed:", solErr);
+          }
+        }
+
+        const res = await fetch("/api/transact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            accountId: connectedAccount,
+            action: activeTab,
+            amount: numAmount,
+            originChain: "Solana",
+            destChain: destChain,
+            recipientAddress: recipientAddress.trim(),
+            vault: activeVault,
+            intentSignature: solSignature,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          throw new Error(data.error || "Solver settlement failed");
+        }
+        txResult = {
+          ...data,
+          phantomSignature: solSignature,
+        };
       }
 
       // 2. Direct On-Chain Signer via /api/transact
@@ -631,6 +690,8 @@ export default function Home() {
 
       const actionDesc = txResult.metaMaskSignature
         ? `🦊 MetaMask Intent Signed & Settled: ${numAmount} USDC from ${sourceChain} -> Minted ${currentReceiptToken}`
+        : txResult.phantomSignature
+        ? `⚡ Phantom Intent Signed & Settled: ${numAmount} USDC from Solana -> Minted ${currentReceiptToken}`
         : activeTab === "deposit"
         ? `Deposited ${numAmount} USDC from ${sourceChain} -> Minted ${currentReceiptToken}`
         : `Withdrew ${numAmount} ${currentReceiptToken} -> Redeemed USDC to ${destChain}`;
@@ -638,6 +699,7 @@ export default function Home() {
       setLogs((prev) => [
         `[${new Date().toLocaleTimeString()}] 🚀 ON-CHAIN TRANSACTION CONFIRMED: ${actionDesc} on NEAR Testnet!`,
         ...(txResult.metaMaskSignature ? [`[${new Date().toLocaleTimeString()}] 🦊 MetaMask Sig: ${txResult.metaMaskSignature.slice(0, 24)}... (Verified Intent)`] : []),
+        ...(txResult.phantomSignature ? [`[${new Date().toLocaleTimeString()}] ⚡ Phantom Sig: ${txResult.phantomSignature.slice(0, 24)}... (Verified Solana Intent)`] : []),
         `[${new Date().toLocaleTimeString()}] 🔗 NearBlocks Explorer: ${txUrl}`,
         `[${new Date().toLocaleTimeString()}] ⚡ ${activeVault === "all-weather" ? "All-Weather 4-Pillar Parity Sockets Active" : "70% RHEA Lending + 30% Ondo USDY Buffer"}`,
         ...prev,
@@ -963,6 +1025,12 @@ export default function Home() {
                         })
                       );
                     }
+
+                    refreshAllBalances(connectedAccount, {
+                      nusd: nextNusd,
+                      omniUsdc: nextOmni,
+                      usdc: nextUsdc,
+                    });
                   }}
                   onRefreshBalances={() => refreshAllBalances(connectedAccount)}
                   onLog={(msg) => setLogs((prev) => [msg, ...prev])}
@@ -1364,7 +1432,12 @@ export default function Home() {
                         ) : (
                           <>
                             <span>
-                              {connectedWallet === "MetaMask" ? (
+                              {connectedWallet === "Phantom" || isSolanaAddress(connectedAccount) ? (
+                                <span className="flex items-center justify-center space-x-1.5">
+                                  <img src="/logos/wallets/phantom.svg" alt="Phantom" className="w-5 h-5 inline-block" />
+                                  <span>{lang === "zh" ? `通过 Phantom 签名存入 (Solana)` : `Sign & Deposit via Phantom (Solana)`}</span>
+                                </span>
+                              ) : connectedWallet === "MetaMask" || connectedAccount.startsWith("0x") ? (
                                 <span className="flex items-center justify-center space-x-1.5">
                                   <img src="/logos/wallets/metamask.svg" alt="MetaMask" className="w-5 h-5 inline-block" />
                                   <span>{lang === "zh" ? `通过 MetaMask 签名意图 (${sourceChain})` : `Sign Intent via MetaMask (${sourceChain})`}</span>

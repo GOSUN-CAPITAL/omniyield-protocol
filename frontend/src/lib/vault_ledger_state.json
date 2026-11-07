@@ -10,5 +10,13 @@
   "curator.omniyield-vault.testnet": {
     "nusd": 5,
     "omniUsdc": 10
+  },
+  "BFQ8Eq6SFqHvpnCaxxupvZrCNCjFgdzHYwUyodGEYFjk": {
+    "nusd": 5,
+    "omniUsdc": 0
+  },
+  "0x9a920a096070b8fb8fde145197bcef40b0a3258a": {
+    "nusd": 1,
+    "omniUsdc": 0
   }
 }

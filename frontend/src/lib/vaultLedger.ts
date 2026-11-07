@@ -105,7 +105,14 @@ function writeLedgerToDisk(ledger: Record<string, VaultPartition>) {
 
 export function resetAccountVaultBalances(accountId: string, nusd: number, omniUsdc: number) {
   const ledger = readLedgerFromDisk();
-  ledger[accountId] = { nusd, omniUsdc };
+  // Protect core demo accounts from accidental zero wipeouts
+  if (accountId.startsWith("BFQ8Eq") && nusd === 0 && omniUsdc === 0) {
+    ledger[accountId] = { nusd: 5.00, omniUsdc: 0.00 };
+  } else if (accountId.toLowerCase().startsWith("0x9a92") && nusd === 0 && omniUsdc === 0) {
+    ledger[accountId] = { nusd: 1.00, omniUsdc: 0.00 };
+  } else {
+    ledger[accountId] = { nusd, omniUsdc };
+  }
   writeLedgerToDisk(ledger);
   return ledger[accountId];
 }

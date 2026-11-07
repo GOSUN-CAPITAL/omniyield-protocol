@@ -854,7 +854,7 @@ export function AccountDrawer({
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
 
-            {onResetBalances && (
+            {false && onResetBalances && (
               <button
                 type="button"
                 onClick={onResetBalances}
