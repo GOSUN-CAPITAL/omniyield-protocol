@@ -43,6 +43,9 @@ export async function GET(req: Request) {
 
   // Handle EVM (MetaMask / Arbitrum) Accounts
   if (accountId.startsWith("0x")) {
+    if (searchParams.get("reset") === "true") {
+      resetAccountVaultBalances(accountId, 0.00, 0.00);
+    }
     const syncOmniUsdc = searchParams.get("syncOmniUsdc");
     const syncNusd = searchParams.get("syncNusd");
     if (syncOmniUsdc !== null || syncNusd !== null) {
@@ -53,8 +56,8 @@ export async function GET(req: Request) {
     const partition = getAccountVaultBalances(accountId);
     return NextResponse.json({
       accountId,
-      nearBalance: "0.50",
-      usdcBalance: 2500,
+      nearBalance: "0.0000",
+      usdcBalance: 0,
       nusdBalance: partition.nusd.toFixed(2),
       omniUsdcBalance: partition.omniUsdc.toFixed(2),
       onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),

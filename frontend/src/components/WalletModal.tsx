@@ -526,6 +526,7 @@ interface AccountDrawerProps {
   onDisconnect: () => void;
   onSwitch: () => void;
   onClaimFaucet: () => void;
+  onResetBalances?: () => void;
   lang?: "en" | "zh";
   theme?: "dark" | "beige";
 }
@@ -543,6 +544,7 @@ export function AccountDrawer({
   onDisconnect,
   onSwitch,
   onClaimFaucet,
+  onResetBalances,
   lang = "en",
   theme = "dark",
 }: AccountDrawerProps) {
@@ -827,6 +829,17 @@ export function AccountDrawer({
               <span>{isEVM ? "View on Etherscan" : "View on NearBlocks"}</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
+
+            {onResetBalances && (
+              <button
+                type="button"
+                onClick={onResetBalances}
+                className="w-full text-center py-1.5 text-[11px] text-slate-400 hover:text-amber-400 transition cursor-pointer flex items-center justify-center space-x-1 border border-dashed border-slate-800 rounded-lg"
+              >
+                <span>🧹</span>
+                <span>{lang === "zh" ? "重置该钱包本地测试资产 (归零)" : "Reset Test Balances (Mode A)"}</span>
+              </button>
+            )}
           </div>
 
           {/* Action Buttons */}

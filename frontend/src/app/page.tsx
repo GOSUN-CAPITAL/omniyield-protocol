@@ -112,20 +112,38 @@ export default function Home() {
     overrides?: { nusd?: string; omniUsdc?: string; usdc?: number }
   ) => {
     let evmEthGas: string | null = null;
+    let evmOnChainUsdc: number | null = null;
+
     if (acc.startsWith("0x")) {
       if (typeof window !== "undefined" && (window as any).ethereum) {
         try {
+          // 1. Real ETH Gas Balance
           const balanceHex = await (window as any).ethereum.request({
             method: "eth_getBalance",
             params: [acc, "latest"],
           });
           const wei = BigInt(balanceHex);
           evmEthGas = (Number(wei / BigInt("1000000000000000")) / 1000).toFixed(4);
+
+          // 2. Query real on-chain ERC-20 USDC balance on current network (e.g. Arbitrum Sepolia)
+          const cleanAddr = acc.toLowerCase().replace("0x", "").padStart(64, "0");
+          const callData = `0x70a08231${cleanAddr}`;
+          const ARB_SEPOLIA_USDC = "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d";
+          try {
+            const usdcHex = await (window as any).ethereum.request({
+              method: "eth_call",
+              params: [{ to: ARB_SEPOLIA_USDC, data: callData }, "latest"],
+            });
+            if (usdcHex && usdcHex !== "0x" && usdcHex !== "0x0") {
+              const rawUsdc = BigInt(usdcHex);
+              evmOnChainUsdc = Number(rawUsdc) / 1_000_000;
+            }
+          } catch (_) {}
         } catch (e) {
           console.error("EVM balance error:", e);
         }
       }
-      setNearBalance(evmEthGas || "0.050");
+      setNearBalance(evmEthGas || "0.0000");
     }
 
     try {
@@ -152,32 +170,48 @@ export default function Home() {
           setNearBalance(data.nearBalance || "0.00");
         }
 
-        // USDC
-        const defaultInitialUsdc = acc.startsWith("0x") ? 100 : (data.usdcBalance ?? 0);
-        const finalUsdc =
-          overrides?.usdc !== undefined
-            ? overrides.usdc
-            : typeof localBalances.usdc === "number"
-            ? localBalances.usdc
-            : defaultInitialUsdc;
+        // Mode A: USDC Balance
+        let finalUsdc = 0;
+        if (overrides?.usdc !== undefined) {
+          finalUsdc = overrides.usdc;
+        } else if (acc.startsWith("0x")) {
+          if (evmOnChainUsdc !== null && evmOnChainUsdc > 0) {
+            finalUsdc = evmOnChainUsdc;
+          } else if (typeof localBalances.usdc === "number") {
+            finalUsdc = localBalances.usdc;
+          } else {
+            // Pure on-chain mode: defaults to 0.00 until claimed from faucet
+            finalUsdc = 0;
+          }
+        } else {
+          finalUsdc = typeof localBalances.usdc === "number" ? localBalances.usdc : (data.usdcBalance ?? 0);
+        }
         setUsdcBalance(finalUsdc);
 
-        // NUSD
-        const serverNusd = parseFloat(data.nusdBalance || "0.00") || 0;
-        const localNusd = localBalances.nusd !== undefined ? parseFloat(localBalances.nusd) : 0;
-        const finalNusd =
-          overrides?.nusd !== undefined
-            ? overrides.nusd
-            : Math.max(serverNusd, localNusd).toFixed(2);
+        // NUSD Balance (Mode A)
+        let finalNusd = "0.00";
+        if (overrides?.nusd !== undefined) {
+          finalNusd = overrides.nusd;
+        } else if (acc.startsWith("0x")) {
+          finalNusd = localBalances.nusd !== undefined ? localBalances.nusd : (data.nusdBalance || "0.00");
+        } else {
+          const serverNusd = parseFloat(data.nusdBalance || "0.00") || 0;
+          const localNusd = localBalances.nusd !== undefined ? parseFloat(localBalances.nusd) : 0;
+          finalNusd = Math.max(serverNusd, localNusd).toFixed(2);
+        }
         setNusdBalance(finalNusd);
 
-        // OmniUSDC
-        const serverOmni = parseFloat(data.omniUsdcBalance || "0.00") || 0;
-        const localOmni = localBalances.omniUsdc !== undefined ? parseFloat(localBalances.omniUsdc) : 0;
-        const finalOmni =
-          overrides?.omniUsdc !== undefined
-            ? overrides.omniUsdc
-            : Math.max(serverOmni, localOmni).toFixed(2);
+        // OmniUSDC Balance (Mode A)
+        let finalOmni = "0.00";
+        if (overrides?.omniUsdc !== undefined) {
+          finalOmni = overrides.omniUsdc;
+        } else if (acc.startsWith("0x")) {
+          finalOmni = localBalances.omniUsdc !== undefined ? localBalances.omniUsdc : (data.omniUsdcBalance || "0.00");
+        } else {
+          const serverOmni = parseFloat(data.omniUsdcBalance || "0.00") || 0;
+          const localOmni = localBalances.omniUsdc !== undefined ? parseFloat(localBalances.omniUsdc) : 0;
+          finalOmni = Math.max(serverOmni, localOmni).toFixed(2);
+        }
         setOmniUsdcBalance(finalOmni);
 
         if (typeof window !== "undefined") {
@@ -305,6 +339,22 @@ export default function Home() {
     if (balance) {
       setNearBalance(balance);
     }
+    // Cleanly isolate previous state when switching accounts
+    if (typeof window !== "undefined") {
+      const raw = localStorage.getItem(`omniyield_balances_${account}`);
+      if (raw) {
+        try {
+          const b = JSON.parse(raw);
+          setNusdBalance(b.nusd || "0.00");
+          setOmniUsdcBalance(b.omniUsdc || "0.00");
+          setUsdcBalance(typeof b.usdc === "number" ? b.usdc : (account.startsWith("0x") ? 0 : 8));
+        } catch (_) {}
+      } else {
+        setNusdBalance("0.00");
+        setOmniUsdcBalance("0.00");
+        setUsdcBalance(account.startsWith("0x") ? 0 : 8);
+      }
+    }
     refreshAllBalances(account);
     if (!isInstitutional(account)) {
       setIsFlipped(false);
@@ -315,6 +365,22 @@ export default function Home() {
     }
     setLogs((prev) => [
       `[${new Date().toLocaleTimeString()}] 🔌 Web3 Wallet Connected: ${account} via ${walletName}.`,
+      ...prev,
+    ]);
+  };
+
+  const handleResetAccountBalances = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(`omniyield_balances_${connectedAccount}`);
+    }
+    setNusdBalance("0.00");
+    setOmniUsdcBalance("0.00");
+    setUsdcBalance(0);
+    try {
+      await fetch(`/api/balances?account=${connectedAccount}&reset=true`);
+    } catch (_) {}
+    setLogs((prev) => [
+      `[${new Date().toLocaleTimeString()}] 🧹 Balances and local storage reset to 0 for ${connectedAccount}.`,
       ...prev,
     ]);
   };
@@ -1939,6 +2005,7 @@ export default function Home() {
         setIsWalletModalOpen(true);
       }}
       onClaimFaucet={handleClaimFaucet}
+      onResetBalances={handleResetAccountBalances}
       lang={lang}
       theme={theme}
     />
