@@ -570,6 +570,7 @@ export function AccountDrawer({
   };
 
   const isEVM = account.startsWith("0x");
+  const isSolana = !account.startsWith("0x") && !account.includes(".") && account.length >= 32;
   const isTestnet = account.includes(".testnet");
   const isVip =
     (parseFloat(nusdBalance) || 0) > 0 ||
@@ -668,10 +669,10 @@ export function AccountDrawer({
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1">
               <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
                 <span className="text-[10px] text-slate-400 block truncate">
-                  {isEVM ? "ETH Gas" : "NEAR Gas"}
+                  {isEVM ? "ETH Gas" : isSolana ? "SOL Gas" : "NEAR Gas"}
                 </span>
                 <span className="font-mono font-bold text-white text-[11px] block mt-0.5 truncate">
-                  {nearBalance} {isEVM ? "ETH" : "N"}
+                  {nearBalance} {isEVM ? "ETH" : isSolana ? "SOL" : "N"}
                 </span>
               </div>
 
@@ -816,17 +817,23 @@ export function AccountDrawer({
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">{lang === "zh" ? "底层网络:" : "Network:"}</span>
               <span className="text-emerald-400 font-mono font-semibold">
-                {isEVM ? "Arbitrum / Base (EVM)" : isTestnet ? "NEAR Testnet" : "NEAR Mainnet"}
+                {isEVM ? "Arbitrum / Base (EVM)" : isSolana ? "Solana (Devnet / Testnet)" : isTestnet ? "NEAR Testnet" : "NEAR Mainnet"}
               </span>
             </div>
 
             <a
-              href={isEVM ? `https://etherscan.io/address/${account}` : `https://testnet.nearblocks.io/address/${account}`}
+              href={
+                isEVM
+                  ? `https://etherscan.io/address/${account}`
+                  : isSolana
+                  ? `https://solscan.io/account/${account}?cluster=devnet`
+                  : `https://testnet.nearblocks.io/address/${account}`
+              }
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center space-x-1.5 w-full py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-300 border border-slate-800 transition"
             >
-              <span>{isEVM ? "View on Etherscan" : "View on NearBlocks"}</span>
+              <span>{isEVM ? "View on Etherscan" : isSolana ? "View on Solscan" : "View on NearBlocks"}</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
 

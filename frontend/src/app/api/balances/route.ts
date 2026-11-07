@@ -130,6 +130,115 @@ async function queryEvmOnChainBalances(address: string, chainName = "Arbitrum") 
   return { usdc, ethGas };
 }
 
+function isSolanaAddress(acc: string): boolean {
+  if (!acc || typeof acc !== "string") return false;
+  if (acc.startsWith("0x") || acc.includes(".")) return false;
+  return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(acc);
+}
+
+const SOLANA_RPCS = [
+  "https://api.devnet.solana.com",
+  "https://api.testnet.solana.com",
+];
+
+const SOLANA_USDC_MINTS = [
+  "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU", // Circle Devnet USDC
+  "CpMah17kQEL2wqyMKt3mZBdUMgN5kujUgqqM5v62mU81", // Alternative Testnet mint
+];
+
+async function querySolanaOnChainBalances(address: string) {
+  let usdc = 0;
+  let solGas = "0.0000";
+
+  for (const rpc of SOLANA_RPCS) {
+    try {
+      // 1. SOL Gas Balance
+      const solRes = await fetch(rpc, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: 1,
+          method: "getBalance",
+          params: [address],
+        }),
+        cache: "no-store",
+      }).then((r) => r.json());
+
+      if (solRes?.result?.value !== undefined) {
+        const lamports = BigInt(solRes.result.value);
+        solGas = (Number(lamports) / 1e9).toFixed(4);
+      }
+
+      // 2. Query Specific USDC SPL Mints
+      for (const mint of SOLANA_USDC_MINTS) {
+        try {
+          const tokenRes = await fetch(rpc, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: 2,
+              method: "getTokenAccountsByOwner",
+              params: [
+                address,
+                { mint },
+                { encoding: "jsonParsed" },
+              ],
+            }),
+            cache: "no-store",
+          }).then((r) => r.json());
+
+          if (tokenRes?.result?.value && Array.isArray(tokenRes.result.value)) {
+            for (const acc of tokenRes.result.value) {
+              const uiAmt = acc?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
+              if (typeof uiAmt === "number" && uiAmt > 0) {
+                usdc = Math.max(usdc, uiAmt);
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
+      // 3. Fallback: Any token accounts under SPL token program
+      if (usdc === 0) {
+        try {
+          const allTokensRes = await fetch(rpc, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: 3,
+              method: "getTokenAccountsByOwner",
+              params: [
+                address,
+                { programId: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" },
+                { encoding: "jsonParsed" },
+              ],
+            }),
+            cache: "no-store",
+          }).then((r) => r.json());
+
+          if (allTokensRes?.result?.value && Array.isArray(allTokensRes.result.value)) {
+            for (const acc of allTokensRes.result.value) {
+              const uiAmt = acc?.account?.data?.parsed?.info?.tokenAmount?.uiAmount;
+              if (typeof uiAmt === "number" && uiAmt > 0) {
+                usdc = Math.max(usdc, uiAmt);
+              }
+            }
+          }
+        } catch (_) {}
+      }
+
+      if (usdc > 0 || parseFloat(solGas) > 0) break;
+    } catch (err) {
+      console.warn(`Solana query error on ${rpc}:`, err);
+    }
+  }
+
+  return { usdc, solGas };
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const accountId = searchParams.get("account");
@@ -165,6 +274,34 @@ export async function GET(req: Request) {
       omniUsdcBalance: partition.omniUsdc.toFixed(2),
       onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),
       isEVM: true,
+    });
+  }
+
+  // Handle Solana (Phantom / Solflare) Accounts
+  if (isSolanaAddress(accountId)) {
+    if (searchParams.get("reset") === "true") {
+      resetAccountVaultBalances(accountId, 0.00, 0.00);
+    }
+    const syncOmniUsdc = searchParams.get("syncOmniUsdc");
+    const syncNusd = searchParams.get("syncNusd");
+    if (syncOmniUsdc !== null || syncNusd !== null) {
+      const parsedOmni = syncOmniUsdc !== null ? parseFloat(syncOmniUsdc) : undefined;
+      const parsedNusd = syncNusd !== null ? parseFloat(syncNusd) : undefined;
+      syncAccountVaultBalances(accountId, parsedNusd, parsedOmni);
+    }
+
+    const solBal = await querySolanaOnChainBalances(accountId);
+    const partition = getAccountVaultBalances(accountId);
+
+    return NextResponse.json({
+      accountId,
+      chain: "Solana",
+      nearBalance: solBal.solGas, // Native SOL gas
+      usdcBalance: solBal.usdc,
+      nusdBalance: partition.nusd.toFixed(2),
+      omniUsdcBalance: partition.omniUsdc.toFixed(2),
+      onChainShares: (partition.nusd + partition.omniUsdc).toFixed(2),
+      isSolana: true,
     });
   }
 

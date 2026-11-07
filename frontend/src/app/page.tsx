@@ -172,17 +172,16 @@ export default function Home() {
       const res = await fetch(url);
       const data = await res.json();
       if (data && !data.error) {
-        if (!acc.startsWith("0x")) {
-          setNearBalance(data.nearBalance || "0.00");
-        } else if (data.nearBalance && data.nearBalance !== "0.0000") {
+        if (data.nearBalance) {
           setNearBalance(data.nearBalance);
         }
 
-        // Mode A: Authoritative On-Chain USDC Balance from RPC
+        // Mode A: Authoritative On-Chain USDC Balance from RPC (EVM / Solana / NEAR)
         let finalUsdc = 0;
+        const isCrossChainAccount = acc.startsWith("0x") || Boolean(data.isSolana);
         if (overrides?.usdc !== undefined) {
           finalUsdc = overrides.usdc;
-        } else if (acc.startsWith("0x")) {
+        } else if (isCrossChainAccount) {
           // Priority 1: Direct On-Chain RPC query from server endpoint
           if (typeof data.usdcBalance === "number" && data.usdcBalance > 0) {
             finalUsdc = data.usdcBalance;
@@ -202,7 +201,7 @@ export default function Home() {
         let finalNusd = "0.00";
         if (overrides?.nusd !== undefined) {
           finalNusd = overrides.nusd;
-        } else if (acc.startsWith("0x")) {
+        } else if (isCrossChainAccount) {
           finalNusd = localBalances.nusd !== undefined ? localBalances.nusd : (data.nusdBalance || "0.00");
         } else {
           const serverNusd = parseFloat(data.nusdBalance || "0.00") || 0;
@@ -215,7 +214,7 @@ export default function Home() {
         let finalOmni = "0.00";
         if (overrides?.omniUsdc !== undefined) {
           finalOmni = overrides.omniUsdc;
-        } else if (acc.startsWith("0x")) {
+        } else if (isCrossChainAccount) {
           finalOmni = localBalances.omniUsdc !== undefined ? localBalances.omniUsdc : (data.omniUsdcBalance || "0.00");
         } else {
           const serverOmni = parseFloat(data.omniUsdcBalance || "0.00") || 0;
