@@ -1,16 +1,34 @@
 # OmniYield Protocol (`NUSD`)
-> **Omni-Chain Adaptive Meta-Vault on NEAR Protocol**  
-> *Developed for NEAR Hackathon: Build Beyond Boundaries (November 1 - 14, 2026)*  
+> **Omni-Chain Adaptive Meta-Vault & Autonomous AI Copilot on NEAR Protocol**  
+> *Developed for NEAR Hackathon: Build Beyond Boundaries ($250K Prize Pool, Nov 1 - 14, 2026)*  
 > **Initiator:** Gosun Labs  
-> **Core Asset:** `NUSD` (NEAR Yield Dollar) — NEP-141 & ERC-4626 Compatible
+> **Core Asset:** `NUSD` (NEAR Yield Dollar) & `OmniUSDC` (All-Weather Macro Token)  
+> **Official Track Alignment:** **Agent Economy** | **AI Security & Defense** | **Privacy & Private AI**  
+> **Machine-Readable Agent Spec:** [`/agent.md`](https://omniyield.finance/agent.md) & [`/llms.txt`](https://omniyield.finance/llms.txt)  
 
 ---
 
 ## 🌟 Overview
 
-**OmniYield Protocol** is a next-generation omni-chain yield optimizer and clearing engine built on the **NEAR Protocol**, inspired by the battle-tested architecture of **Morpho (MetaMorpho)**.
+**OmniYield Protocol** is a next-generation omni-chain yield optimizer and autonomous wealth management engine built natively on **NEAR Protocol**, inspired by the battle-tested architecture of **Morpho (MetaMorpho)** and powered by **NEAR AI Cloud**.
 
-By leveraging **NEAR Chain Signatures (MPC)** and **NEAR Intents**, OmniYield allows users on **any external chain (Arbitrum, Solana, Base, Ethereum)** to deposit stablecoins (USDC/USDT) in a single click, automatically route capital between high-yield NEAR lending (RHEA Finance) and tokenized US Treasuries (Ondo RWA), and withdraw to any chain in seconds—**with zero cross-chain bridge risks, zero native gas headaches, and strict supply cap containment.**
+By leveraging **NEAR Chain Signatures (MPC)**, **NEAR Intents**, and a **Tri-Pillar Autonomous AI Copilot**, OmniYield allows users on **any external chain (Arbitrum, Solana, Base, Ethereum)** to deposit stablecoins in a single click, automatically route capital between high-yield NEAR lending (RHEA Finance) and tokenized US Treasuries (Ondo RWA), and rebalance according to Bridgewater risk parity—**with zero cross-chain bridge risks, zero native gas headaches, and strict supply cap containment.**
+
+---
+
+## 🛡️ Hackathon Track Alignment & Architectural Innovations
+
+### 1. 🏆 Agent Economy Track
+- **Autonomous Intent-to-Transaction Engine**: Translates natural language prompts into executable on-chain financial payloads across dual vaults (NUSD Core 12.4% & OmniUSDC All-Weather 16.8%).
+- **Machine-Readable Protocol Manifest**: Fully supports RFC-NEAR-AI-04 via `/agent.md` and `/llms.txt`, enabling any external NEAR AI or Web3 agent to autonomously query vaults and execute transactions.
+
+### 2. 🛡️ AI Security & Defense Track ("The Right to Run")
+- **Policy-Based Authorization Sandbox**: Conforming to NEAR Foundation CLO's *"The Right to Run"* thesis—agents operate with uninhibited reasoning freedom while execution is strictly bounded by deterministic policy gates (target whitelist `omniyield-vault.testnet`, 0.50% slippage ceiling, 2/2 SputnikDAO multi-sig verification).
+- **Multi-Sig Intent Gatekeeper**: Integrated with `dao.omniyield-vault.testnet` featuring an independent Guardian entity equipped with circuit breaker veto powers.
+
+### 3. 🔒 Privacy & Private AI Track
+- **Stateless Sovereign Client Session**: Adopts NEAR AI Cloud's *Stateless Responses API* standard. Chat history and financial intents are held exclusively inside the user's sovereign client (LocalStorage), with zero central server conversation retention.
+- **Native NEAR AI Cloud Integration**: Powered by `z-ai/glm-5.3-flash` on NEAR AI Cloud with multi-tier resilient fallback to Google Gemini and decentralized Pyth / CoinGecko oracles.
 
 ```
                      [Any-Chain User (Arbitrum / Solana / Base)]

@@ -1,0 +1,20 @@
+# OmniYield Protocol
+
+> Institutional-grade cross-chain AI yield aggregator and dual-vault liquidity protocol natively built on NEAR Protocol ($250k NEAR Hackathon).
+
+## Core Capabilities
+- **Dual-Vault Architecture**:
+  - NUSD Core Vault: 12.40% APY (70% RHEA Lending + 30% Ondo USDY US Treasuries).
+  - OmniUSDC All-Weather Vault: 16.80% APY (Bridgewater 4-Pillar Risk Parity).
+- **Tri-Pillar AI Copilot**:
+  - Chief Investment Advisor (Macro hedging & Pyth oracle signals).
+  - Intent Quant Trader (Zero-bridge 1-click execution across 16 chains).
+  - Chief Customer Concierge (24/7 sovereign support).
+- **Security & Multi-Sig**:
+  - SputnikDAO 2/2 Multi-Sig (`dao.omniyield-vault.testnet`).
+  - Policy Authorization Sandbox (Strict intent boundary adhering to NEAR CLO's "The Right to Run" paradigm).
+
+## Machine-Readable Specifications
+- [Full Agent Manifest](https://omniyield.finance/agent.md): Complete JSON schema, contract endpoints, and intent execution specifications.
+- [Whitepaper](https://github.com/GOSUN-CAPITAL/omniyield-protocol/blob/main/docs/WHITEPAPER.md): Theoretical foundations and Bridgewater risk parity equations.
+- [Architecture Spec](https://github.com/GOSUN-CAPITAL/omniyield-protocol/blob/main/docs/ARCHITECTURE_SPEC.md): Technical diagrams and socket standard.

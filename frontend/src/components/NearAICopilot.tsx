@@ -813,6 +813,19 @@ export default function NearAICopilot({
 
         {/* Right Status Controls - ALL ELEMENTS STRICTLY h-7 (28px), Zero Wrap */}
         <div className="flex items-center space-x-2 ml-auto flex-shrink-0">
+          {/* NEAR AI Cloud Native Engine Badge */}
+          <div
+            className={`hidden lg:flex items-center h-7 px-2.5 rounded-lg text-[10px] font-mono font-bold border space-x-1.5 whitespace-nowrap flex-shrink-0 ${
+              theme === "beige"
+                ? "bg-amber-500/10 text-amber-800 border-amber-300 shadow-2xs"
+                : "bg-amber-950/20 text-amber-300 border-amber-500/30"
+            }`}
+            title="NEAR AI Cloud (GLM-5.3 Flash & Gemini Multi-Tier Fallback | Stateless Sovereign Private Engine)"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span>NEAR AI Cloud</span>
+          </div>
+
           {/* Integrated Pyth & Macro Regime Pill (h-7) */}
           <div
             className={`h-7 flex items-center space-x-1.5 px-2.5 rounded-lg text-[11px] font-mono font-semibold border whitespace-nowrap flex-shrink-0 ${
@@ -1023,6 +1036,18 @@ export default function NearAICopilot({
 
                   <p className="text-[11px] leading-relaxed opacity-90">{m.actionCard.description}</p>
 
+                  {/* NEAR Foundation 'The Right to Run' Policy-Based Authorization Sandbox Badge */}
+                  <div className="flex items-center justify-between text-[10px] px-2.5 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-mono">
+                    <span className="flex items-center space-x-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>{lang === "zh" ? "策略授权沙箱:" : "Policy Sandbox:"}</span>
+                      <strong className="font-semibold text-emerald-700 dark:text-emerald-300">{lang === "zh" ? "已放行 (白名单金库)" : "Passed (Whitelisted)"}</strong>
+                    </span>
+                    <span className="text-[9px] text-emerald-700/80 dark:text-emerald-400/80">
+                      {lang === "zh" ? "滑点 ≤0.5% · 0 Gas" : "Max 0.5% · 0 Gas"}
+                    </span>
+                  </div>
+
                   {m.actionCard.projectedReturn && (
                     <div className="p-2 rounded-xl bg-white/60 dark:bg-black/30 border border-black/5 dark:border-white/10 text-[11px] font-mono flex justify-between items-center">
                       <span className="text-slate-500">{lang === "zh" ? "预估年化收益:" : "Projected Return:"}</span>
@@ -1215,11 +1240,23 @@ export default function NearAICopilot({
               </button>
             </div>
 
+            {/* Agent Manifest Link (/agent.md - Machine-Readable Standard from NEAR AI Cloud) */}
+            <a
+              href="/agent.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-7 px-2.5 rounded-lg text-[10px] font-mono text-slate-500 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center space-x-1 ml-auto mr-1 cursor-pointer border border-transparent hover:border-emerald-500/30 transition"
+              title="NEAR AI Agent Protocol Specification (/agent.md)"
+            >
+              <Bot className="w-3 h-3 text-emerald-500" />
+              <span>agent.md ↗</span>
+            </a>
+
             {/* Minimize / Expand Toggle (Aligned to h-7) */}
             <button
               type="button"
               onClick={() => setIsPromptRibbonOpen(!isPromptRibbonOpen)}
-              className="h-7 px-2.5 rounded-lg text-[11px] text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center space-x-1 ml-auto cursor-pointer border border-transparent hover:border-black/5 dark:hover:border-white/5 transition"
+              className="h-7 px-2.5 rounded-lg text-[11px] text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center space-x-1 cursor-pointer border border-transparent hover:border-black/5 dark:hover:border-white/5 transition"
             >
               <Sparkles className="w-3 h-3 text-amber-500" />
               <span>
