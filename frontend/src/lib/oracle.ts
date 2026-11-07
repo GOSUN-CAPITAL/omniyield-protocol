@@ -42,17 +42,17 @@ export async function getLiveMarketSnapshot(): Promise<LiveMarketSnapshot> {
 
   // Base fallback prices
   const prices: Record<string, AssetPriceInfo> = {
-    BTC: { symbol: "BTC", name: "Bitcoin", priceUsd: 77550.0, change24h: -0.42, source: "Coinbase/Pyth" },
-    ETH: { symbol: "ETH", name: "Ethereum", priceUsd: 2275.5, change24h: +0.45, source: "Coinbase/Pyth" },
-    NEAR: { symbol: "NEAR", name: "NEAR Protocol", priceUsd: 4.06, change24h: -7.71, source: "Coinbase/Ref" },
-    SOL: { symbol: "SOL", name: "Solana", priceUsd: 93.65, change24h: -1.46, source: "Coinbase/Pyth" },
-    PAXG: { symbol: "PAXG", name: "Tokenized Physical Gold", priceUsd: 3918.8, change24h: +0.58, source: "CoinGecko" },
-    USDY: { symbol: "USDY", name: "Ondo US Dollar Yield", priceUsd: 1.15, change24h: +0.08, source: "Ondo Finance" },
-    QQQ: { symbol: "QQQ", name: "Invesco Nasdaq 100 ETF", priceUsd: 690.49, change24h: -3.47, source: "TradingView / Nasdaq Direct" },
-    SPX: { symbol: "SPX", name: "S&P 500 Index", priceUsd: 7580.07, change24h: -0.59, source: "TradingView / CBOE" },
+    BTC: { symbol: "BTC", name: "Bitcoin", priceUsd: 76010.0, change24h: +0.02, source: "Coinbase/Pyth" },
+    ETH: { symbol: "ETH", name: "Ethereum", priceUsd: 2243.95, change24h: +0.39, source: "Coinbase/Pyth" },
+    NEAR: { symbol: "NEAR", name: "NEAR Protocol", priceUsd: 3.71, change24h: -0.32, source: "Coinbase Pro Spot" },
+    SOL: { symbol: "SOL", name: "Solana", priceUsd: 89.96, change24h: -0.06, source: "Coinbase/Pyth" },
+    PAXG: { symbol: "PAXG", name: "Tokenized Physical Gold", priceUsd: 4060.65, change24h: -0.05, source: "CoinGecko" },
+    USDY: { symbol: "USDY", name: "Ondo US Dollar Yield", priceUsd: 1.052, change24h: +0.02, source: "Ondo Finance" },
+    QQQ: { symbol: "QQQ", name: "Invesco Nasdaq 100 ETF", priceUsd: 656.10, change24h: +0.85, source: "TradingView / Nasdaq Direct" },
+    SPX: { symbol: "SPX", name: "S&P 500 Index", priceUsd: 5920.0, change24h: +0.42, source: "TradingView / CBOE" },
     DXY: { symbol: "DXY", name: "US Dollar Index", priceUsd: 101.62, change24h: -0.34, source: "TradingView / ICE" },
-    US10Y: { symbol: "US10Y", name: "US 10-Year Treasury Yield", priceUsd: 4.904, change24h: -0.59, source: "TradingView Benchmark" },
-    NVDA: { symbol: "NVDA", name: "NVIDIA Corp", priceUsd: 204.64, change24h: -4.22, source: "TradingView / Nasdaq" },
+    US10Y: { symbol: "US10Y", name: "US 10-Year Treasury Yield", priceUsd: 4.42, change24h: -0.59, source: "TradingView Benchmark" },
+    NVDA: { symbol: "NVDA", name: "NVIDIA Corp", priceUsd: 186.64, change24h: +1.25, source: "TradingView / Nasdaq" },
     USDC: { symbol: "USDC", name: "USD Coin", priceUsd: 1.0, change24h: 0.0, source: "Circle Native" },
   };
 

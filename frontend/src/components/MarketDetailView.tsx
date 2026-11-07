@@ -54,7 +54,7 @@ export default function MarketDetailView({
 
   const isPositive = asset.change24h >= 0;
   const payNum = parseFloat(payAmount) || 0;
-  const payTokenPrice = payToken === "USDC" ? 1.0 : 5.20;
+  const payTokenPrice = payToken === "USDC" ? 1.0 : (asset.id === "near" ? asset.priceUsd : 3.71);
   const totalPayUsd = payNum * payTokenPrice;
   const receiveNum = totalPayUsd > 0 && asset.priceUsd > 0 ? totalPayUsd / asset.priceUsd : 0;
   const formattedReceive =

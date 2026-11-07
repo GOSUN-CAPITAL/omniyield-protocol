@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Search,
   LayoutGrid,
@@ -44,6 +44,34 @@ export default function MarketsView({
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<SortOption>("featured");
   const [selectedAsset, setSelectedAsset] = useState<MarketAsset | null>(null);
+  const [livePrices, setLivePrices] = useState<Record<string, { priceUsd: number; change24h: number; source?: string }>>({});
+  const [isLiveActive, setIsLiveActive] = useState(false);
+
+  // Poll Real-Time Oracle Prices (CoinGecko / Coinbase / Yahoo Finance)
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch("/api/prices");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.prices && isMounted) {
+            setLivePrices(data.prices);
+            setIsLiveActive(true);
+          }
+        }
+      } catch (err) {
+        console.warn("Error loading live prices:", err);
+      }
+    };
+
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 15000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Category Pills definition
   const categories: { id: MarketCategory; label: { en: string; zh: string } }[] = [
@@ -56,9 +84,22 @@ export default function MarketsView({
     { id: "vaults", label: { en: "Vault Strategies", zh: "金库策略" } },
   ];
 
-  // Filter and Sort assets
+  // Filter and Sort assets with live price overlay
   const filteredAssets = useMemo(() => {
-    let result = [...MARKETS_DATA];
+    let result = MARKETS_DATA.map((a) => {
+      const live = livePrices[a.id];
+      if (live && live.priceUsd > 0) {
+        const newChange = live.change24h;
+        const newAmount = (live.priceUsd * newChange) / 100;
+        return {
+          ...a,
+          priceUsd: live.priceUsd,
+          change24h: newChange,
+          changeAmount24h: newAmount,
+        };
+      }
+      return a;
+    });
 
     // Filter by category
     if (activeCategory !== "all") {
@@ -90,7 +131,7 @@ export default function MarketsView({
     }
 
     return result;
-  }, [activeCategory, searchQuery, sortBy]);
+  }, [activeCategory, searchQuery, sortBy, livePrices]);
 
   // If an asset is selected, render the dedicated near.com style full-page detail view!
   if (selectedAsset) {
@@ -138,7 +179,13 @@ export default function MarketsView({
         </div>
 
         {/* Quick Summary Badges */}
-        <div className="flex items-center space-x-2 text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+          <div className="px-3 py-1.5 rounded-xl well-inset flex items-center space-x-1.5 border border-emerald-500/20 bg-emerald-500/5">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="text-emerald-500 font-semibold">
+              {lang === "zh" ? "CoinGecko / Coinbase 实时预言机" : "Live Oracle Feed (Coinbase / CoinGecko)"}
+            </span>
+          </div>
           <div className="px-3 py-1.5 rounded-xl well-inset">
             <span className="text-slate-400 mr-1.5">Assets:</span>
             <strong className={theme === "beige" ? "text-slate-900" : "text-white"}>
