@@ -1,0 +1,36 @@
+const fs = require('fs');
+
+// High-end institutional NUSD coin logo design
+// Elegant Emerald + Cyan gradient, NEAR stylized N + Yield curve
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <radialGradient id="innerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Background Badge -->
+  <circle cx="64" cy="64" r="60" fill="#0B0F19" stroke="url(#grad)" stroke-width="4.5"/>
+  <circle cx="64" cy="64" r="52" fill="url(#innerGlow)"/>
+  <circle cx="64" cy="64" r="51" fill="none" stroke="#10B981" stroke-width="1" stroke-dasharray="3 3" opacity="0.35"/>
+  
+  <!-- Stylized NUSD Symbol (NEAR "N" + Dollar Motif) -->
+  <path d="M42 86V42L72 78V42" stroke="url(#grad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M86 42V86" stroke="url(#grad)" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <!-- Top Right Yield Sparkle -->
+  <circle cx="86" cy="32" r="4.5" fill="#10B981"/>
+</svg>`;
+
+const dataUri = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+console.log('DATA_URI_LENGTH:', dataUri.length);
+console.log('DATA_URI:');
+console.log(dataUri);
+
+// Also save SVG to frontend/public for web display
+fs.writeFileSync('frontend/public/nusd-logo.svg', svg);
+

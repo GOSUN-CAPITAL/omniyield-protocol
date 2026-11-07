@@ -1,0 +1,18 @@
+# ==============================================================================
+# Cloudflare Zero Trust Tunnel Configuration (cloudflared)
+# Place this in ~/.cloudflared/config.yml or configure via Cloudflare Dashboard
+# ==============================================================================
+tunnel: omniyield-safe-vps-tunnel
+credentials-file: /root/.cloudflared/omniyield-safe-vps-tunnel.json
+
+ingress:
+  # Map https://safe.omniyield.finance to the local OmniSafe Node container
+  - hostname: safe.omniyield.finance
+    service: http://127.0.0.1:4000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+
+  # Default fallback rule (required by cloudflared)
+  - service: http_status:404
+

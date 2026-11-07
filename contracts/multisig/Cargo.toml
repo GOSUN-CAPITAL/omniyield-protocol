@@ -1,0 +1,24 @@
+[package]
+name = "omniyield-multisig"
+version = "0.1.0"
+edition = "2021"
+authors = ["Gosun Labs <dev@gosun.network>"]
+description = "OmniYield Protocol: 3-of-5 Institutional Multi-Sig Governance Contract"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+near-sdk = { version = "5.5.0", features = ["legacy", "unit-testing"] }
+borsh = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+

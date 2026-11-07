@@ -1,0 +1,14 @@
+{
+  "dao.omniyield-vault.testnet": {
+    "nusd": 9,
+    "omniUsdc": 0.94
+  },
+  "allocator.omniyield-vault.testnet": {
+    "nusd": 7,
+    "omniUsdc": 0
+  },
+  "curator.omniyield-vault.testnet": {
+    "nusd": 5,
+    "omniUsdc": 10
+  }
+}

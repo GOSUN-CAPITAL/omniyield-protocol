@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # 1. OmniSafe Sovereign Node API & Strategy Engine
+  omniyield-safe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: omniyield-safe-node
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4000:4000" # Only bind locally, NEVER expose to public 0.0.0.0
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - FRONTEND_ORIGIN=https://app.omniyield.finance
+      - OMNISAFE_JWT_SECRET=${OMNISAFE_JWT_SECRET:-omniyield_master_safe_secret_2026}
+      - NEAR_NETWORK=testnet
+    networks:
+      - safe-network
+
+  # 2. Cloudflare Zero-Trust Tunnel (Zero Open Ports on VPS!)
+  # Connects https://safe.omniyield.finance directly to http://omniyield-safe:4000
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: omniyield-cloudflared-tunnel
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - omniyield-safe
+    networks:
+      - safe-network
+
+networks:
+  safe-network:
+    driver: bridge
+

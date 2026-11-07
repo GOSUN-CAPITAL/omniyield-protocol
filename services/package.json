@@ -1,0 +1,21 @@
+{
+  "name": "omniflow-allocator-service",
+  "version": "0.1.0",
+  "description": "AI Public Allocator & Intent Keeper for OmniYield Protocol",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "simulate": "ts-node src/simulator.ts"
+  },
+  "dependencies": {
+    "near-api-js": "^4.0.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.12.7"
+  }
+}
+
