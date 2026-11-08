@@ -1,5 +1,5 @@
 # OmniYield Protocol · Institutional Investment Pitch Deck & Executive Brief
-**The Universal Embedded Earn Stack for Web3 Wallets, Fintechs & Neo-Banks**  
+**The Sovereign Embedded Earn Stack for Web3 Wallets, Fintechs & Neo-Banks**  
 *Confidential · For Institutional & Strategic Partner Review*  
 *November 2026 | Gosun Labs Research & Engineering*  
 *Website: [https://omniyield.3691618.xyz](https://omniyield.3691618.xyz) | Contact: capital@gosun.network*
@@ -8,15 +8,19 @@
 
 ## Executive Summary
 
-OmniYield is the **first chain-abstracted "Embedded Earn-as-a-Service" infrastructure** built on the NEAR Protocol. 
+OmniYield is the **world's first chain-abstracted "Embedded Earn-as-a-Service" infrastructure** built on the NEAR Protocol. 
 
-By unifying **Morpho Blue's isolated risk architecture**, **Veda’s 4-layer Enterprise Earn stack**, and **NEAR Chain Signatures / Intents**, OmniYield enables consumer wallets (Phantom, MetaMask, OKX), fintech neo-banks, and web3 applications to embed turnkey, risk-managed on-chain yields directly into their apps via **`@omniyield/earn-sdk`** (5 lines of code) with **zero custodial liability** and **automated 0.35% annualized revenue sharing**.
+Operating under a high-conviction **"Proprietary + To-B" (自营 + TO B)** dual-engine model and a **"NEAR Sovereign Hub + Multi-Chain Franchise" (NEAR 自营中枢 + 多链加盟)** network topology, OmniYield bridges fragmented stablecoin capital into institutional-grade yield instruments.
+
+Consumer wallets (Phantom, MetaMask, OKX), fintech neo-banks, and web3 applications embed turnkey, risk-managed on-chain yields directly into their apps via **`@omniyield/earn-sdk`** (5 lines of code) with **zero custodial liability** and **automated 0.35% annualized revenue sharing**, while high-net-worth and institutional clients access OmniYield's proprietary flagship vaults directly.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 KEY INVESTMENT HIGHLIGHTS                              │
 ├───────────────────────────────┬────────────────────────────────────────────────────────┤
 │ Massive Addressable Market    │ $170B+ stablecoins in circulation; $5B+ embedded earn  │
+│ Proven Dual-Engine Model      │ Proprietary Flagship Vaults + B2B Franchise Ecosystem  │
+│ Franchise Expansion Topology  │ NEAR Sovereign Hub + Multi-Chain Outposts (Solana/EVM) │
 │ Capital-Efficient Product     │ Dual-Vault Matrix: NUSD (11.84%) & OmniUSDC (16.40%)   │
 │ Zero-Friction User Experience │ 1-click cross-chain deposits from Solana/EVM; zero gas │
 │ Institutional Risk Framework  │ Multi-Curator Registry (Steakhouse/Bitwise) & Tri-Safe │
@@ -27,45 +31,54 @@ By unifying **Morpho Blue's isolated risk architecture**, **Veda’s 4-layer Ent
 
 ---
 
-## 1. The Macro Problem: The Broken State of On-Chain Earn
+## 1. The Core Strategic Moat: Dual-Engine & Franchise Topology
 
-### 1.1 \$170 Billion in Marooned Stablecoins
+```mermaid
+flowchart TD
+    subgraph CoreStrategy ["The OmniYield Strategic Blueprint"]
+        M1["1. Proprietary Operations (自营旗舰)<br/>Direct dApp + NEAR AI Wealth Copilot + Institutional Treasury Management"]
+        M2["2. To-B Embedded Distribution (TO B 赋能)<br/>@omniyield/earn-sdk + Whitelabel Sub-Vaults + 0.35% Annual TVL Partner Rebate"]
+        
+        M3["3. NEAR Sovereign Hub (自营中枢)<br/>Canonical ERC-4626 Ledger + Multi-Curator Debt Ceilings + MPC Chain Signatures"]
+        M4["4. Multi-Chain Franchise (多链加盟体系)<br/>Solana, Arbitrum, Base, Telegram Mini-Apps as Franchise Outposts & Sockets"]
+    end
+    
+    M1 --- M3
+    M2 --- M4
+    M3 ===|Atomic Settlement Without Bridges| M4
+```
+
+### 1.1 "自营 + TO B" (Dual-Engine Business Model)
+* **自营旗舰 (Proprietary Engine)**: OmniYield operates its own branded master vaults ($NUSD$ and $OmniUSDC$), maintaining institutional liquidity, verifiable on-chain audits, and direct relationships with family offices, funds, and wealth clients via the **NEAR AI Copilot** (Advisor, Quant, Desk).
+* **TO B 赋能 (B2B Infrastructure Engine)**: OmniYield packages its yield generation, cross-chain solver settlement, and risk underwriting into an embeddable middleware stack (`@omniyield/earn-sdk`). Third-party wallets, consumer apps, and neo-banks monetize their un-invested user float without bearing regulatory or custodial burden.
+
+### 1.2 "NEAR 自营中枢 + 多链加盟" (Franchise Expansion Model)
+* **NEAR 链自营中枢 (Sovereign Hub)**: All definitive share accounting, debt ceiling governance, and atomic clearing live on NEAR. By anchoring state to NEAR's high throughput and ultra-low transaction fees, OmniYield operates as a bulletproof clearinghouse.
+* **多链加盟体系 (Multi-Chain Franchise Network)**: 
+  * **Distribution Franchisees**: Wallets on Solana (Phantom), Arbitrum (MetaMask), and Base (Coinbase Wallet) act as franchise storefronts.
+  * **Strategy Sockets**: Premier lending, sovereign debt, and liquidity pools across any chain plug into OmniYield as permissioned strategy sockets.
+  * **Zero Bridge Risk**: Liquidity is coordinated through decentralized MPC threshold signatures and competitive solver networks—no wrapped tokens, zero bridge contagion.
+
+---
+
+## 2. The Macro Problem: The Broken State of On-Chain Earn
+
+### 2.1 \$170 Billion in Marooned Stablecoins
 Despite massive stablecoin issuance, over 80% of consumer and business stablecoins sit completely idle (0% yield) because existing DeFi yields require high technical literacy, complex bridging, and dangerous token approvals.
 
-### 1.2 The Fintech & Wallet Monetization Crisis
+### 2.2 The Fintech & Wallet Monetization Crisis
 Consumer crypto wallets and neo-banks face contracting interchange fees and fierce price wars. While they desire to offer interest-bearing accounts to improve user retention, building native multi-chain yield strategies presents three fatal barriers:
 
 ```mermaid
 flowchart TD
     P1["1. Custodial Liability & Legal Risk<br/>Managing user private keys across 20+ chains exposes apps to multi-million dollar hacks."]
-    P2["2. Smart Contract Contagion Risk<br/>Traditional DeFi pools (Aave/Compound) pool risk. One bad collateral asset collapses the entire vault."]
+    P2["2. Smart Contract Contagion Risk<br/>Traditional DeFi pools pool risk. One bad collateral asset collapses the entire vault."]
     P3["3. High Engineering Overhead<br/>Maintaining cross-chain bridges, RPC clusters, and token approvals requires a dedicated 10-person dev team."]
     
     P1 --> Barrier["The Institutional Wall:<br/>95% of Wallets & Fintechs cannot launch Earn on their own."]
     P2 --> Barrier
     P3 --> Barrier
 ```
-
----
-
-## 2. The Solution: OmniYield Enterprise Earn Stack
-
-OmniYield operates as the **Universal Connective Tissue** between consumer capital distribution and institutional yield generation:
-
-```mermaid
-flowchart LR
-    A["Distribution Channels<br/>(Wallets, Fintechs, CEXs)"] -->|5 Lines of Code<br/>@omniyield/earn-sdk| B["OmniYield Meta-Vault<br/>(NEAR Chain Abstraction)"]
-    B -->|Isolated Debt Ceilings| C["Multi-Curator Risk Layer<br/>(Steakhouse / Bitwise / AI)"]
-    C -->|Dynamic Allocations| D["Modular Protocol Sockets<br/>(RHEA Lending, Ondo Treasuries, Gold, Equities)"]
-    
-    D -->|Real Cash-Flow| B
-    B -->|0.35% Annual Rebate| A
-```
-
-### Core Value Propositions:
-1. **For Distributors (Wallets / Fintechs)**: Zero custody risk. Zero infrastructure maintenance. Instant 0.35% annualized net revenue share on all client TVL.
-2. **For Curators (Risk Managers)**: Permissionless sub-vault creation with hard cryptographic debt ceilings and performance fee sharing (up to 30%).
-3. **For End Users**: Institutional net yields (11.84% ~ 16.40%) deposited directly from their native chain (Solana/Arbitrum/Base) without leaving their preferred wallet.
 
 ---
 
@@ -106,27 +119,19 @@ OmniYield offers two complementary tokenized yield instruments targeting differe
        $1.5B+ Target OmniYield TVL by Year 2 ($5.25M Annual Protocol Revenue)
 ```
 
-### Market Growth Tailwinds:
-* **Embedded Earn Growth**: Embedded on-chain earn grew from \$500M in 2024 to over \$5.2B in 2026 (10x in 24 months, Veda Data).
-* **Solana & L2 Institutional Inflow**: Consumer wallets like Phantom and Coinbase Wallet command over 50M active monthly users looking for high-yield dollar savings.
-
 ---
 
 ## 5. Competitive Landscape & Unfair Advantages
 
-| Feature / Protocol | Traditional Lending (Aave/Compound) | Yield Aggregators (Yearn/Beefy) | Synthetic USD (Ethena USDe) | Multi-Chain Earn (Veda) | **OmniYield Protocol** |
+| Feature / Protocol | Traditional Lending (Aave/Compound) | Yield Aggregators (Yearn/Beefy) | Synthetic USD (Ethena USDe) | Institutional Middleware | **OmniYield Protocol** |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Cross-Chain Bridge Dependency** | High (Requires manual bridge) | High (Single-chain silos) | Moderate | Moderate (Bespoke EVM) | **Zero (Native NEAR Intents & Solvers)** |
 | **Gas Token Requirement** | Native Gas on each chain | Native Gas on each chain | Dependent | Dependent | **100% Gas Abstracted (0 Gas to User)** |
-| **Risk Architecture** | Monolithic Pooled Risk | Strategy Wrapped Risk | Funding Rate Basis Risk | Modular Sub-Vaults | **Morpho Blue Isolated Caps + Whitelabel Sub-Vaults** |
-| **B2B SDK & Playground** | No (Retail UI only) | No (Retail UI only) | No | Institutional Custom | **Full `@omniyield/earn-sdk` + Widget Playground** |
+| **Business Model** | Pure Retail B2C | Pure Retail B2C | Single Basis Trade | B2B Only | **Dual-Engine: Proprietary + To-B B2B** |
+| **Network Expansion** | Monolithic Multi-Deploy | Forked Aggregators | Single Derivative | Multi-EVM | **NEAR Sovereign Hub + Multi-Chain Franchise** |
+| **B2B SDK & Playground** | No (Retail UI only) | No (Retail UI only) | No | Complex Integration | **Turnkey `@omniyield/earn-sdk` + Playground** |
 | **Native AI Intent Copilot** | None | None | None | None | **Tri-Pillar AI (Advisor, Quant, Desk via Gemini)** |
-| **Whitelabel Sub-Vaults** | No | No | No | Yes | **Yes (Curator-Defined Debt Ceilings on NEAR)** |
-
-### OmniYield’s Unfair Moats:
-1. **Chain Abstraction Moat**: Leveraging NEAR's MPC Chain Signatures, OmniYield controls liquidity across Solana, Arbitrum, Base, and Ethereum without managing external private keys or exposing users to bridge vulnerabilities.
-2. **Double-Entry Ledger Integrity**: Real on-chain balance deductions ensure 100% financial consistency across all partner platforms.
-3. **Turnkey B2B Monetization**: Partners can go from zero to live in under 15 minutes using our drop-in React components or Headless REST APIs.
+| **Whitelabel Sub-Vaults** | No | No | No | Yes | **Yes (Curator Debt Ceilings on NEAR Hub)** |
 
 ---
 
@@ -136,16 +141,16 @@ OmniYield operates a transparent, cash-flow generative economic model:
 
 ```mermaid
 flowchart LR
-    A["Gross Yield: 14.50% Gross APY"] --> B["OmniYield Core Settlement Engine"]
+    A["Gross Yield: 14.50% Gross APY"] --> B["OmniYield Core Settlement Engine (NEAR Hub)"]
     B -->|80% ~ 85%| C["Depositor Net Yield: 11.84% ~ 12.50%"]
     B -->|10% ~ 15% Performance Fee| D["Gross Protocol Revenue"]
     
-    D -->|50%| E["B2B Distributor Rebate<br/>(0.20% ~ 0.50% TVL Incentive)"]
+    D -->|50%| E["B2B Franchise Distributor Rebate<br/>(0.20% ~ 0.50% TVL Incentive)"]
     D -->|30%| F["Curator Performance Bounty<br/>(Steakhouse / Bitwise / AI)"]
     D -->|20%| G["OmniYield DAO Treasury<br/>(Buyback, Token Accrual, Insurance)"]
 ```
 
-### Projected Financial Projections:
+### Projected Financial Performance:
 
 | Metric | Phase 1 (Launch) | Phase 2 (Year 1) | Phase 3 (Year 2) | Phase 4 (Year 3) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -173,13 +178,13 @@ OmniYield implements an institutional **Tri-Safe Multi-Signature Governance Mode
 
 ```mermaid
 flowchart TD
-    Q4_2026["Q4 2026: Core Infrastructure & Testnet Launch (COMPLETED)<br/>• Deploy omniflow_vault.wasm on NEAR Testnet with ERC-4626 / NEP-141 standard.<br/>• Launch B2B Enterprise Earn SDK Playground & Live Widget Simulator.<br/>• Implement Multi-Curator & Whitelabel Sub-Vault Registry in smart contract.<br/>• Ship double-entry balance accounting for Solana Phantom & MetaMask."]
+    Q4_2026["Q4 2026: Core Infrastructure & Testnet Launch (COMPLETED)<br/>• Deploy omniflow_vault.wasm on NEAR Hub with ERC-4626 / NEP-141 standard.<br/>• Launch B2B Enterprise Earn SDK Playground & Live Widget Simulator.<br/>• Implement Multi-Curator & Franchise Sub-Vault Registry in smart contract.<br/>• Ship double-entry balance accounting for Solana Phantom & MetaMask."]
     
-    Q1_2027["Q1 2027: Security Audits & Distributor Onboarding<br/>• Complete formal verification and dual tier-1 smart contract audits (Halborn / OpenZeppelin).<br/>• Pilot @omniyield/earn-sdk with 3 launch partners (Solana wallet, fintech neo-bank).<br/>• Deploy production Sputnik DAO Tri-Safe with 24h on-chain timelock."]
+    Q1_2027["Q1 2027: Security Audits & Franchise Distributor Onboarding<br/>• Complete formal verification and dual tier-1 smart contract audits (Halborn / OpenZeppelin).<br/>• Pilot @omniyield/earn-sdk with 3 launch partners (Solana wallet, fintech neo-bank).<br/>• Deploy production Sputnik DAO Tri-Safe with 24h on-chain timelock."]
     
     Q2_2027["Q2 2027: Mainnet Launch & Institutional Sub-Vaults<br/>• Mainnet deployment on NEAR with native Circle USDC and Ondo USDY adapters.<br/>• Onboard external institutional curators (Steakhouse Financial, Bitwise RWA).<br/>• Surpass $50M in protocol TVL."]
     
-    Q3_2027["Q3 2027: Multi-Chain Expansion & Token Generation Event (TGE)<br/>• Connect high-throughput L1 sockets (Monad, Sui, Aptos).<br/>• Launch $OMNI governance token with real-yield buyback and staking flywheel.<br/>• Scale to $250M+ TVL."]
+    Q3_2027["Q3 2027: Multi-Chain Franchise Expansion & Token Generation Event (TGE)<br/>• Connect high-throughput L1 sockets (Monad, Sui, Aptos).<br/>• Launch $OMNI governance token with real-yield buyback and staking flywheel.<br/>• Scale to $250M+ TVL."]
 
     Q4_2026 --> Q1_2027 --> Q2_2027 --> Q3_2027
 ```

@@ -184,8 +184,8 @@ bot.onText(/\\/earn/, (msg) => {
 
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
             {lang === "zh"
-              ? "借鉴 Veda 企业级堆栈范式，OmniYield 为加密钱包、新银行、交易所与 Telegram 小程序提供标准化无托管理财中间件。底层基于 NEAR 链抽象与多链意图，零托管风险、多链聚合、前端体验永不中断。"
-              : "Inspired by the Veda Enterprise Earn Stack, OmniYield enables fintechs, exchanges, and wallets to offer high-yield on-chain vaults to their users. Powered by NEAR Chain Abstraction, it provides non-custodial custody, unified accounting, and sub-second intent settlements."}
+              ? "基于 OmniYield 全链企业级堆栈架构，OmniYield 为加密钱包、新银行、交易所与 Telegram 小程序提供标准化无托管理财中间件。底层基于 NEAR 链抽象与多链意图，支持自营与 TO B 双轨驱动，零托管风险、多链聚合、前端体验永不中断。"
+              : "Powered by the OmniYield Enterprise Earn Stack (OEES™), OmniYield enables fintechs, exchanges, and wallets to offer high-yield on-chain vaults to their users. Combining NEAR Chain Abstraction with multi-chain franchise expansion, it provides non-custodial custody, unified accounting, and sub-second intent settlements."}
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
@@ -599,8 +599,8 @@ bot.onText(/\\/earn/, (msg) => {
 
             <p className="text-xs text-slate-400 leading-relaxed">
               {lang === "zh"
-                ? "根据 Veda 标准企业级收益模型，分发商（Distributor）无需分担任何清算与智能合约风险，即可享受 0.35% 的持续性年化 TVL 抽成，按块实时结清至您的链上金库。"
-                : "Distributors earn a 0.35% recurring annual fee based on client TVL with zero balance-sheet risk or capital outlay, settled in real-time."}
+                ? "根据 OmniYield 企业级收益模型，分发加盟商（Distributor）无需分担任何清算与智能合约风险，即可享受 0.35% 的持续性年化 TVL 抽成，按块实时结清至您的链上金库。"
+                : "Under OmniYield's B2B franchise economics, distributors earn a 0.35% recurring annual fee based on client TVL with zero balance-sheet risk or capital outlay, settled in real-time."}
             </p>
           </div>
 

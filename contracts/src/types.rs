@@ -62,7 +62,7 @@ pub struct FeeConfig {
     pub management_fee_recipient: Option<AccountId>,
 }
 
-/// Multi-Curator Configuration & Risk Limit Specification (Veda Paradigm)
+/// Multi-Curator Configuration & Risk Limit Specification (OmniYield Modular Architecture)
 #[near(serializers = [borsh, json])]
 #[derive(Clone, Debug, PartialEq)]
 pub struct CuratorConfig {

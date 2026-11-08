@@ -240,7 +240,7 @@ export default function VaultCockpitBackside({
   const [targetReserveRatio, setTargetReserveRatio] = useState("15");
   const [whaleQueueThreshold, setWhaleQueueThreshold] = useState("50000");
 
-  // Veda Paradigm Option B: Multi-Curator & Whitelabel Sub-Vault Registry State
+  // OmniYield Modular Option B: Multi-Curator & Franchise Sub-Vault Registry State
   const [curatorList, setCuratorList] = useState([
     {
       id: "curator.omniyield-vault.testnet",
@@ -895,7 +895,7 @@ export default function VaultCockpitBackside({
           </form>
         </div>
 
-        {/* 1.6 Veda Multi-Curator & Whitelabel Sub-Vault Registry (Option B) */}
+        {/* 1.6 OmniYield Multi-Curator & Franchise Sub-Vault Registry (Option B) */}
         <div
           id="safe-sub-vaults"
           className="p-6 rounded-3xl border transition shadow-sm space-y-5 card-surface"
@@ -908,7 +908,7 @@ export default function VaultCockpitBackside({
               <div>
                 <div className="flex items-center space-x-2">
                   <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
-                    {lang === "zh" ? "1.6 机构多策展人与白标子金库注册中心 (Veda 架构规范)" : "1.6 Veda Multi-Curator & Whitelabel Sub-Vault Registry"}
+                    {lang === "zh" ? "1.6 机构多策展人与加盟子金库注册中心 (OmniYield 模块化规范)" : "1.6 Multi-Curator & Franchise Sub-Vault Registry"}
                   </h4>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-mono font-bold border border-indigo-500/30">
                     Option B · Smart Contract v2.1
@@ -916,8 +916,8 @@ export default function VaultCockpitBackside({
                 </div>
                 <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                   {lang === "zh"
-                    ? "借鉴 Veda 模块化分层：支持外部独立投研 (Steakhouse/Bitwise) 策展独立金库，各子金库硬性隔离债务上限 (Debt Ceiling) 与白名单资产。"
-                    : "Modular Sub-Vaults: Independent risk curators manage whitelabel vaults with isolated debt ceilings and permissioned market sockets."}
+                    ? "自营旗舰 + TO B 加盟双轨驱动：支持自营主权中枢与外部独立投研 (Steakhouse/Bitwise) 策展加盟金库，各子金库硬性隔离债务上限 (Debt Ceiling) 与白名单资产。"
+                    : "Proprietary Hub + B2B Franchise: Independent risk curators manage whitelabel franchise sub-vaults with isolated debt ceilings and permissioned market sockets."}
                 </p>
               </div>
             </div>

@@ -11,12 +11,12 @@
 
 Decentralized Finance (DeFi) currently suffers from extreme liquidity fragmentation, fragile cross-chain bridge topologies, and capital misallocation across heterogeneous Layer-1 and Layer-2 blockchains. Over \$170 billion in stablecoin assets remain marooned within single-chain silos, resulting in sub-optimal yields, frequent debt-ceiling saturations, and severe user-experience friction driven by fragmented gas tokens. Concurrently, non-DeFi platforms—including major Web3 consumer wallets, fintech neo-banks, and centralized exchanges—seek to offer compliant, risk-adjusted yields to their users without assuming custodial liability or building bespoke multi-chain execution engines.
 
-In this paper, we introduce **OmniYield Protocol**, a non-custodial, chain-abstracted enterprise asset management protocol and tokenized meta-vault architecture deployed on the **NEAR Protocol**. Inspired by the minimalist, isolated risk framework of **Morpho Blue**, the institutional curation layer of **Veda’s Enterprise Earn Stack**, and **Bridgewater’s All-Weather Macro Parity**, OmniYield delivers a dual-vault investment matrix:
+In this paper, we introduce **OmniYield Protocol**, a non-custodial, chain-abstracted enterprise asset management protocol and tokenized meta-vault architecture deployed on the **NEAR Protocol**. Built upon a strategic **"Proprietary + To-B" (自营 + TO B)** dual-engine business model and a **"NEAR Sovereign Hub + Multi-Chain Franchise" (NEAR 自营中枢 + 多链加盟)** network topology, OmniYield delivers an institutional-grade investment matrix:
 
 1. **`NUSD` (Core Lending Vault · Target APY 11.84%)**: An institutional pure-USD yield accumulator dynamically arbitrating between NEAR’s premier native lending pool (**RHEA Finance**) and short-term US Treasury reserves (**Ondo USDY**).
 2. **`OmniUSDC` (All-Weather RWA Vault · Target APY 16.40%)**: A macro-hedged, multi-asset risk-parity vault arbitrating across four economic quadrants: Overcollateralized Lending (40%), Sovereign US Treasuries (30%), Gold Bullion PAXG (15%), and Tech Equities Invesco QQQ (15%).
 
-By combining **NEAR Chain Signatures** (decentralized MPC threshold cryptography) with **NEAR Intents**, off-chain atomic solver networks, and the **`@omniyield/earn-sdk`** B2B distribution suite, OmniYield establishes a unified financial connective tissue. Fintechs and wallets embed turnkey on-chain yield via 5 lines of code, while independent risk curators (e.g., Steakhouse Financial, Bitwise RWA, Autonomous AI Agents) manage segregated whitelabel sub-vaults with cryptographic debt ceilings (`max_debt_ceiling`). Users deposit native assets from any origin chain (Solana, Arbitrum, Base, NEAR) with zero bridge friction, automated gas abstraction, and double-entry on-chain ledger finality.
+By combining **NEAR Chain Signatures** (decentralized MPC threshold cryptography) with **NEAR Intents**, off-chain atomic solver networks, and the **`@omniyield/earn-sdk`** B2B distribution suite, OmniYield establishes a unified financial connective tissue. The protocol operates proprietary flagship vaults directly for institutional and retail capital, while simultaneously empowering external fintechs, wallets, and ecosystem partners to launch whitelabel franchise sub-vaults with independent cryptographic debt ceilings (`max_debt_ceiling`). Users deposit native assets from any origin chain (Solana, Arbitrum, Base, NEAR) with zero bridge friction, automated gas abstraction, and double-entry on-chain ledger finality.
 
 ---
 
@@ -29,85 +29,99 @@ The blockchain ecosystem has transitioned from a monolithic paradigm into a frag
 2. **Bridge Risk and the "Wrapped Token Trap"**: Traditional cross-chain infrastructure relies on lock-and-mint or burn-and-mint multi-signature bridges. Over \$3 billion has been lost to bridge exploits (Ronin, Wormhole, Nomad, Multichain). Wrapped tokens ($wBTC$, $wETH$, $USDC.e$) create unbacked systemic contagion when bridge custody collapses.
 3. **Execution Complexity & Gas Starvation**: Moving assets across networks requires users to maintain native gas tokens across distinct ecosystems ($ETH$, $SOL$, $NEAR$), manage disparate wallet providers, and execute multi-step token approvals.
 
-### 1.2 The Paradigm Shift: The Enterprise Earn Stack (Veda Insight)
-As detailed in recent institutional research (Veda, August 2026), the next \$100 billion of on-chain capital will not arrive via retail users manually rotating liquidity across decentralized apps. Instead, it will be catalyzed by **Embedded On-Chain Earn**—where fintech neo-banks, custodial wallets, and web3 consumer platforms embed native on-chain yields directly into their existing consumer interfaces.
+### 1.2 The Strategic Dual-Engine Model: Proprietary Flagships + To-B B2B Distribution
+The next \$100 billion of on-chain capital will not arrive purely via retail users manually rotating liquidity across decentralized apps, nor will it be captured exclusively by closed consumer apps. OmniYield executes a **Dual-Engine (自营 + TO B) Model**:
 
-However, enterprise distributors face prohibitive hurdles:
-* **Custodial Liability**: Managing private keys across 20+ chains exposes distributors to catastrophic operational risk.
-* **Smart Contract Contagion**: Pool-based lending protocols (e.g. traditional Aave/Compound) pool collateral risk, meaning one bad asset can compromise the entire protocol.
-* **Integration Overhead**: Building bespoke connections to individual protocols across Solana, Ethereum, and Layer-2s requires months of engineering and perpetual maintenance.
+* **Engine 1: Proprietary Flagship Operations (自营旗舰)**  
+  OmniYield directly designs, curates, and operates its premier flagship vaults—$NUSD$ Core Lending and $OmniUSDC$ All-Weather RWA. These vaults serve institutional wealth clients, DAO treasuries, and retail users directly through the OmniYield decentralized terminal, supported by the **NEAR AI Copilot** (Advisor, Quant, Desk roles).
+* **Engine 2: To-B Embedded Distribution (TO B 赋能)**  
+  OmniYield abstracts the complexity of multi-chain yield generation into a turn-key B2B infrastructure stack. Web3 wallets (Phantom, MetaMask, OKX), fintech neo-banks, and web3 applications integrate `@omniyield/earn-sdk` with 5 lines of code, offering native yield under their own brand or via plug-and-play components while earning an automated 0.35% annualized TVL revenue share.
 
-### 1.3 The OmniYield Solution
-OmniYield resolves this impasse by acting as the **Universal Connective Tissue for Enterprise Earn**, divorcing user-facing intent distribution from underlying multi-chain execution:
+### 1.3 The Expansion Paradigm: NEAR Sovereign Hub + Multi-Chain Franchise (NEAR 自营中枢 + 多链加盟)
+Rather than fragmenting liquidity by deploying isolated, competing contracts across 10 different public chains, OmniYield introduces the **Franchise / Federation Topology**:
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 THE OMNIYIELD PARADIGM                                  │
-├───────────────────────────────┬────────────────────────────────────────────────────────┤
-│ Traditional Cross-Chain Vault │ OmniYield Enterprise Earn Stack (`NUSD` / `OmniUSDC`)  │
-├───────────────────────────────┼────────────────────────────────────────────────────────┤
-│ Lock-and-mint wrapped tokens  │ Zero wrapped tokens; native MPC multi-chain control    │
-│ Monolithic pooled risk        │ Isolated sub-markets & Whitelabel Sub-Vaults (Morpho)  │
-│ Retail-only manual farming    │ B2B `@omniyield/earn-sdk` with automated partner rebate│
-│ Rigid single-curator model    │ Multi-Curator registry (Steakhouse, Bitwise, AI Agents)│
-│ Single-chain gas friction     │ Universal intents: Solvers front gas & cross-chain cash│
-│ Static single-strategy yield  │ Dual-Vault Matrix: Core Lending vs All-Weather Parity  │
-└───────────────────────────────┴────────────────────────────────────────────────────────┘
+                                  OMNIYIELD NETWORK TOPOLOGY
+                                  
+    [Solana Franchise]       [Arbitrum Franchise]      [Base Franchise]      [Telegram Mini-App]
+    • Phantom Users          • MetaMask / EVM          • Coinbase Wallet     • TON / Social Users
+    • Kamino / LP Sockets    • Morpho / Aave Sockets   • Aerodrome Sockets   • Chatbot Commerce
+            │                         │                        │                      │
+            └─────────────────────────┼────────────────────────┴──────────────────────┘
+                                      ▼
+                        ┌───────────────────────────────┐
+                        │      CROSS-CHAIN INTENTS      │
+                        │ (Solver Network + 0 Gas Cost) │
+                        └──────────────┬────────────────┘
+                                       │
+                                       ▼
+        ===================================================================
+        ★ NEAR SOVEREIGN SETTLEMENT HUB (自营中枢 · CANONICAL STATE)
+          • Canonical ERC-4626 / NEP-141 Dual-Vault Share Ledger
+          • Multi-Curator & Whitelabel Sub-Vault Registry (Steakhouse/Bitwise)
+          • MPC Chain Signatures (v1.signer) Remote Foreign-Chain Asset Control
+          • Tri-Safe Multi-Sig Governance & 24h Mandatory Timelock
+        ===================================================================
 ```
+
+1. **NEAR as the Sovereign Clearing Hub (自营主权中枢)**:  
+   NEAR functions as the ultra-fast, low-cost capital clearinghouse. Canonical vault accounting, share issuance, anti-inflation virtual offsets, and risk limit enforcement reside exclusively on NEAR, protected by NEAR's high-throughput consensus.
+2. **Multi-Chain as Franchise Nodes (多链加盟生态)**:  
+   External blockchains act as *franchise distribution outposts* and *franchise yield sockets*. Solana, Arbitrum, and Base users interact natively in their domestic environment; their capital and intent are atomically bridged and settled onto the NEAR hub without cross-chain bridge risks.
 
 ---
 
-## 2. Four-Layer Enterprise Architecture
+## 2. Four-Tier Decoupled Architecture
 
-Following the Veda architectural taxonomy, OmniYield structures the enterprise earn lifecycle across four strictly decoupled layers:
+OmniYield structures the enterprise earn lifecycle across four strictly decoupled architectural tiers:
 
 ```mermaid
 flowchart TD
-    subgraph Layer1 ["Layer 1: Distribution Layer (Wallets & Fintechs)"]
-        D1["Web3 Consumer Wallets\n(Phantom, MetaMask, OKX)"]
-        D2["Fintech Neo-Banks &\nPayment Apps"]
-        D3["Centralized Exchanges\n(Earn Portals)"]
+    subgraph Tier1 ["Tier 1: Distribution Layer (Proprietary dApp & B2B Franchise)"]
+        D1["OmniYield Proprietary Terminal\n(Direct Web3 & AI Wealth Copilot)"]
+        D2["Consumer Wallets Franchise\n(Phantom, MetaMask, OKX)"]
+        D3["Fintech Neo-Banks &\nPayment Apps"]
         D4["Telegram Mini-Apps &\nChatbot Terminals"]
     end
 
-    subgraph Layer2 ["Layer 2: Vault Connective Tissue (OmniYield on NEAR)"]
+    subgraph Tier2 ["Tier 2: Vault Connective Tissue (NEAR Sovereign Hub)"]
         SDK["@omniyield/earn-sdk\n(Headless API / React Widget)"]
         Intents["NEAR Intents Clearing Engine\n(Solver Network & Gas Abstraction)"]
         Ledger["Sovereign Double-Entry Ledger\n(NEP-141 / ERC-4626 / Real Deductions)"]
         DualVault["Dual-Vault State Engine\n(NUSD Core & OmniUSDC All-Weather)"]
     end
 
-    subgraph Layer3 ["Layer 3: Curation & Risk Management (Multi-Curator Registry)"]
+    subgraph Tier3 ["Tier 3: Curation & Risk Management (Multi-Curator Registry)"]
         C1["OmniYield Master DAO Curator\n(Cap: $100M | 30% Fee Share)"]
         C2["Steakhouse Financial Engine\n(Cap: $50M | 25% Fee Share)"]
         C3["Bitwise RWA Alpha Engine\n(Cap: $25M | 20% Fee Share)"]
         C4["Autonomous AI Quant Curator\n(Continuous APY & Spread Rebalancing)"]
     end
 
-    subgraph Layer4 ["Layer 4: Protocol Strategy Sockets (OmniSocket™)"]
+    subgraph Tier4 ["Tier 4: Protocol Strategy Sockets (OmniSocket™)"]
         S1["Socket #1: RHEA Lending\n(Overcollateralized USD Spread)"]
         S2["Socket #2: Ondo US Treasuries\n(USDY Sovereign Bond Yield)"]
         S3["Socket #3: PAXG Gold Reserve\n(Inflation & Crisis Hedge)"]
         S4["Socket #4: Invesco QQQ ETF\n(US Tech Equities Upside)"]
     end
 
-    Layer1 -->|Embed SDK & Sign Intent| Layer2
-    Layer2 --- Layer3
-    Layer3 -->|Constrained Rebalance| Layer4
+    Tier1 -->|Embed SDK & Sign Intent| Tier2
+    Tier2 --- Tier3
+    Tier3 -->|Constrained Rebalance| Tier4
 ```
 
-### 2.1 Layer 1: Distribution Layer (The Distributors)
+### 2.1 Tier 1: Distribution Layer (Proprietary & B2B Franchise)
 Distributors (wallets, fintechs, exchanges) possess user relationships and custody-free interfaces. Through `@omniyield/earn-sdk` or headless REST endpoints, distributors embed turn-key yield cards. Each distributor is assigned a unique cryptographic `Partner ID`, guaranteeing real-time tracking of generated Total Value Locked (TVL) and automated distribution of partner fee rebates (0.20% to 0.50% annualized).
 
-### 2.2 Layer 2: Vault Connective Tissue (OmniYield Meta-Vault)
-Deployed on the NEAR high-throughput runtime, this layer maintains the canonical ERC-4626 / NEP-141 share registry, coordinates solver-based intent execution, and performs continuous anti-inflation share price accounting. It operates as a neutral financial bus, completely indifferent to which blockchain the user's capital originated from.
+### 2.2 Tier 2: Vault Connective Tissue (NEAR Sovereign Hub)
+Deployed on the NEAR high-throughput runtime, this tier maintains the canonical ERC-4626 / NEP-141 share registry, coordinates solver-based intent execution, and performs continuous anti-inflation share price accounting. It operates as a neutral financial bus, completely indifferent to which blockchain the user's capital originated from.
 
-### 2.3 Layer 3: Multi-Curator & Whitelabel Sub-Vault Registry
+### 2.3 Tier 3: Multi-Curator & Franchise Sub-Vault Registry
 DeFi risk is not monolithic; different institutional distributors require distinct risk-return profiles. Rather than enforcing a single central committee, OmniYield implements a **Multi-Curator Registry**:
 * **Independent Risk Curators**: Approved financial underwriters (e.g. Steakhouse, Bitwise, Gauntlet) register on-chain and receive an immutable `max_allocation_cap` and strategy market whitelist.
-* **Whitelabel Sub-Vaults**: B2B partners deploy customized sub-vaults (e.g., `Steakhouse USD Core Alpha`, `Bitwise All-Weather RWA Institutional`) possessing segregated debt ceilings (`max_debt_ceiling`), customized management/performance fees, and independent emergency pause switches.
+* **Whitelabel Franchise Sub-Vaults**: B2B partners deploy customized sub-vaults (e.g., `Steakhouse USD Core Alpha`, `Bitwise All-Weather RWA Institutional`) possessing segregated debt ceilings (`max_debt_ceiling`), customized management/performance fees, and independent emergency pause switches.
 
-### 2.4 Layer 4: Protocol Strategy Sockets (OmniSocket™)
+### 2.4 Tier 4: Protocol Strategy Sockets (OmniSocket™)
 Underlying protocol adapters encapsulate the idiosyncrasies of specific yield sources (lending markets, sovereign bonds, liquidity pools, synthetic equities) behind a uniform interface:
 $$\text{Socket Interface} = \{\text{supply}(), \text{withdraw}(), \text{get\_current\_apy\_bps}(), \text{get\_available\_liquidity}()\}$$
 
@@ -148,10 +162,10 @@ The mathematical portfolio weight vector $\mathbf{w} = [0.40, 0.30, 0.15, 0.15]^
 
 ---
 
-## 4. Multi-Curator & Whitelabel Sub-Vault Registry
+## 4. Multi-Curator & Franchise Sub-Vault Registry
 
 ### 4.1 Strict Risk Isolation Invariant
-A primary insight from Veda's institutional research is that pooled multi-tenant vaults inevitably lead to lowest-common-denominator risk governance. OmniYield solves this through **Cryptographic Sub-Vault Partitioning**:
+A primary architectural principle of OmniYield is that pooled multi-tenant vaults inevitably lead to lowest-common-denominator risk governance. OmniYield solves this through **Cryptographic Sub-Vault Partitioning**:
 
 Let $\mathcal{V}$ be the set of registered sub-vaults. Each sub-vault $v \in \mathcal{V}$ is defined as a 9-tuple:
 $$v = \langle \text{id}, \text{name}, \mathcal{C}_v, \mathcal{D}_v, A_v(t), S_v(t), \Phi_v, \mathcal{M}_v, \Omega_v^{\text{debt}} \rangle$$
@@ -296,7 +310,7 @@ $$\mathcal{R} = \{\text{Owner}, \text{Curator}, \text{Allocator}, \text{Guardian
 
 ## 8. B2B Tokenomics & Enterprise Revenue Engine
 
-The Veda report proves that Enterprise Earn infrastructure commands superior cash-flow multiples compared to retail DeFi farms. OmniYield establishes a sustainable, multi-stakeholder fee model:
+Institutional market data demonstrates that enterprise embedded earn infrastructure commands superior cash-flow multiples compared to retail DeFi yield aggregators. OmniYield establishes a sustainable, multi-stakeholder fee model:
 
 ```mermaid
 flowchart LR
@@ -332,7 +346,7 @@ The core contracts have been engineered with production-grade modularity:
 
 ## 10. Conclusion
 
-OmniYield represents the convergence of institutional risk management and sovereign cross-chain abstraction. By integrating Morpho Blue's isolated sub-market paradigm, Veda's Enterprise Earn multi-curator stack, and NEAR's native chain signatures, OmniYield transforms fragmented stablecoins into high-velocity, risk-managed capital instruments: **`NUSD`** and **`OmniUSDC`**.
+OmniYield represents the convergence of institutional risk management and sovereign cross-chain abstraction. By integrating Morpho Blue's isolated sub-market paradigm, OmniYield's native Enterprise Earn multi-curator stack, and NEAR's native chain signatures, OmniYield transforms fragmented stablecoins into high-velocity, risk-managed capital instruments: **`NUSD`** and **`OmniUSDC`**.
 
 With plug-and-play B2B distribution via `@omniyield/earn-sdk`, independent whitelabel sub-vaults, and automated solver-based settlement, OmniYield delivers the premier enterprise earn infrastructure for the next generation of global Web3 finance.
 
@@ -343,9 +357,8 @@ With plug-and-play B2B distribution via `@omniyield/earn-sdk`, independent white
 1. **Adams, H., et al.** (2021). *Uniswap v3 Core*. Uniswap Labs.
 2. **Frambot, P., et al.** (2023). *Morpho Blue: The Minimalist and Immutable Lending Protocol*. Morpho Labs.
 3. **Frambot, P., et al.** (2023). *MetaMorpho: Non-Custodial Risk Management on Morpho Blue*. Morpho Labs.
-4. **Veda Labs.** (2026). *The Enterprise Earn Stack: An overview guide to embedded onchain Earn*. Veda Protocol Research.
-5. **Skidanov, A., & Polosukhin, I.** (2019). *NEAR Protocol: A Decentralized Application Platform*. NEAR Protocol.
-6. **Dalio, R.** (2015). *The All Weather Story*. Bridgewater Associates.
-7. **Ethena Labs.** (2024). *Ethena: Synthetic Dollar Protocol Specification*.
-8. **Ondo Finance.** (2023). *Ondo Short-Term US Government Bond Fund (USDY) Technical Framework*.
-9. **Ethereum Improvement Proposals.** (2022). *ERC-4626: Tokenized Vault Standard*. EIP-4626.
+4. **Skidanov, A., & Polosukhin, I.** (2019). *NEAR Protocol: A Decentralized Application Platform*. NEAR Protocol.
+5. **Dalio, R.** (2015). *The All Weather Story*. Bridgewater Associates.
+6. **Ethena Labs.** (2024). *Ethena: Synthetic Dollar Protocol Specification*.
+7. **Ondo Finance.** (2023). *Ondo Short-Term US Government Bond Fund (USDY) Technical Framework*.
+8. **Ethereum Improvement Proposals.** (2022). *ERC-4626: Tokenized Vault Standard*. EIP-4626.

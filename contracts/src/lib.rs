@@ -779,7 +779,7 @@ impl OmniYieldVault {
     }
 
     // =========================================================================
-    // Veda Multi-Curator & Whitelabel Sub-Vault Registry (Option B Implementation)
+    // OmniYield Multi-Curator & Franchise Whitelabel Sub-Vault Registry
     // =========================================================================
 
     /// Register a specialized external or AI risk curator (e.g. Steakhouse, Bitwise, Sentora)

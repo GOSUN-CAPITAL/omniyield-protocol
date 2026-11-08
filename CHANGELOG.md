@@ -4,33 +4,38 @@
 
 ---
 
-## [v2.3.0] - 2026-11-08 · 项目白皮书全面升级与机构融资商业材料发布 (Option C Release)
+## [v2.3.0] - 2026-11-08 · “自营+TO B”战略定位确立、NEAR自营中枢+多链加盟拓扑与白皮书v2.2.0发布
 
 ### 🌟 核心突破与对外材料升维 (Institutional Deck & Whitepaper v2.2.0)
+- **确立“自营旗舰 + TO B 赋能”双引擎商业模型**：
+  - **自营旗舰**：自主运营官方双金库（$NUSD$ 核心借贷金库 11.84% 与 $OmniUSDC$ 全天候 RWA 平价金库 16.40%），直面高端资管、家族办公室与 DAO 国库，配备 NEAR AI Copilot 实时财富操盘；
+  - **TO B 赋能**：通过 `@omniyield/earn-sdk`、极简 HTML Script 与 Headless API 赋能全球 Web3 钱包（Phantom、MetaMask、OKX）与金融科技新银行，合作伙伴零运维享受每年 0.35% 年化 TVL 抽成。
+- **确立“NEAR 链自营中枢 + 多链加盟扩张”网络拓扑**：
+  - **NEAR 自营清算中枢**：主权账本、份额发行、防通胀虚拟偏移、风控限额管理全局沉淀在 NEAR 极速低成本底座；
+  - **多链加盟体系**：Solana、Arbitrum、Base 等异构链作为“分销加盟商”与“策略插座加盟商”，通过 NEAR 门限签名与意图网络实现无桥无滑点极速清算。
 - **技术白皮书全面升维至 v2.2.0 (`docs/WHITEPAPER.md`)**：
   - 核心定义升级：将 OmniYield 定位为**面向 Web3 钱包与金融科技的“全链企业级嵌入式收益堆栈”（Enterprise-Grade Embedded Earn Stack）**。
-  - 完整引入 **Veda 4 层解耦架构**（分发层、金库结缔组织层、策展风控层、底层策略插座层）。
-  - 深度扩充**双金库矩阵**：`NUSD` 核心借贷利差金库（11.84% APY）与 `OmniUSDC` 全天候宏观平价金库（16.40% APY，四大宏观象限数学映射与夏普比率推导）。
-  - 详尽阐释 **Multi-Curator 白标子金库机制**：债务上限硬隔离不变性证明、策展人链上业绩分成公式、4 权分立治理矩阵与 24h 时间锁防护。
+  - 完整确立 OmniYield 4 层解耦架构（分发加盟层、主权金库结缔层、多策展风控层、底层策略插座层）。
+  - 详尽阐释 **Multi-Curator 加盟子金库机制**：债务上限硬隔离不变性证明、策展人链上业绩分成公式、4 权分立治理矩阵与 24h 时间锁防护。
   - 全链复式记账法（Double-Entry Accounting）与无桥意图清算证明。
 - **机构融资商业 Pitch Deck 归档发布 (`docs/INSTITUTIONAL_PITCH_DECK.md`)**：
   - **核心叙事与投资亮点**：聚焦 \$170B+ 闲置稳定币与 \$5B+ 爆发式增长的 Embedded Earn 蓝海赛道。
-  - **B2B2C 商业模式与单车经济模型**：为分发商（如 Phantom、OKX、新银行）提供零代码集成与每年 **0.35% TVL 返佣现金流**测算表（$10M TVL 获 \$35K/年，$100M TVL 获 \$350K/年）。
-  - **全球竞品多维对比矩阵**：对比 Aave/Compound、Yearn、Ethena USDe、Veda，确立 OmniYield 在链抽象无桥结算、Gas 纯代付、双金库矩阵与 AI 意图 Copilot 上的绝对代际护城河。
+  - **B2B2C 商业模式与单车经济模型**：为分发商提供零代码集成与每年 **0.35% TVL 返佣现金流**测算表（$10M TVL 获 \$35K/年，$100M TVL 获 \$350K/年）。
+  - **全球竞品多维对比矩阵**：确立 OmniYield 在链抽象无桥结算、Gas 纯代付、双金库矩阵与 AI 意图 Copilot 上的绝对代际护城河。
   - **财务测算与阶段估值模型**：推导 TVL 从 \$10M 跃升至 \$1B 阶段协议年度性能费、分发商分成与国库回购规模。
   - **融资条款与资金用途规划**：明确 Seed / Strategic 轮 \$2.5M 融资方案及 MPC 优化、顶级审计、生态激励分布。
 
 ---
 
-## [v2.2.0] - 2026-11-08 · Veda 多策展人与机构白标子金库架构 (Option B & Cross-Chain Solidification)
+## [v2.2.0] - 2026-11-08 · 多策展人与加盟白标子金库架构 (Multi-Curator & Franchise Sub-Vaults)
 
 ### 🌟 核心突破与智能合约升级 (Smart Contract & Institutional Cockpit)
-- **Veda 多策展人与独立风控注册中心 (Multi-Curator Registry)**：
+- **多策展人与独立风控注册中心 (Multi-Curator Registry)**：
   - 在 NEAR 智能合约 (`omniflow_vault.wasm`) 引入 `CuratorConfig` 与 `register_curator` / `update_curator_limits` / `get_curators` 接口。
   - 支持外部独立投研机构（如 Steakhouse Financial、Bitwise RWA、Autonomous AI Agents）成为持牌风控策展人，分配硬性风险总仓位额度（Allocation Cap）与底层生息市场白名单，享受独立的业绩分成比例（Fee Share Bps）。
-- **机构级白标子金库注册中心 (Whitelabel Sub-Vault Registry)**：
+- **机构级加盟白标子金库注册中心 (Whitelabel Sub-Vault Registry)**：
   - 合约新增 `WhitelabelSubVault` 结构与 `create_sub_vault` / `set_sub_vault_pause` / `reallocate_sub_vault` / `get_all_sub_vaults` 方法。
-  - 支持 B2B 合作伙伴与分销机构拥有完全隔离的子金库（例如 `Steakhouse USD Core Alpha` 与 `Bitwise All-Weather RWA Institutional`）。
+  - 支持 B2B 合作伙伴与分销机构拥有完全隔离的加盟子金库（例如 `Steakhouse USD Core Alpha` 与 `Bitwise All-Weather RWA Institutional`）。
   - **核心不变性与风险隔离 (Strict Risk Invariant)**：各子金库独立设定债务上限 (`max_debt_ceiling`) 与市场白名单，调仓严格限制在子金库资产边界内，杜绝交叉感染。
 - **机构后台全维可视化与应急控制台 (Section 1.6 Cockpit View)**：
   - 在 `VaultCockpitBackside.tsx` 深度呈现 Section 1.6 **`机构多策展人与白标子金库注册中心`**。
