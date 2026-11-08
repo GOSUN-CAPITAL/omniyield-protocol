@@ -51,3 +51,4 @@
 - Circle Native USDC (ft_transfer_call 6 位精度) 原生交互支持。
 - Chain Abstraction 链抽象意图结算引擎。
 - 自动化一键部署与归档套件（`archive.bat`, `archive.ps1`, `start.bat`, `stop.bat`）。
+
