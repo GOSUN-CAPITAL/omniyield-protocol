@@ -4,6 +4,32 @@
 
 ---
 
+## [v2.5.0] - 2026-11-08 · 官方黑客松成功终审提交、NEAR Builders 榜首建档、洛书主权定稿 LOGO 与全景国际化升级
+
+### 🌟 核心突破与官方生态里程碑 (NEAR Official Milestones)
+- **NEAR HACKATHON 官方终审成功提交 (`nearhackathon.com/#apply`)**：
+  - **完成最终报名与立项收录**：成功收到官方 **`✓ SUBMISSION RECEIVED: You're on the radar!`** 确认回执，官方正式进入评审周期（评奖揭晓至 2026-11-18）。
+  - **精准对齐四大核心赛道**：
+    1. **Unstoppable DeFi (`defi`)**：Morpho 风格双队列资本路由 + RHEA 借贷超额利差 + 16 链免桥清算；
+    2. **Privacy & Private AI (`privacy`)**：NEAR AI Cloud 硬件级机密计算（Intel TDX / NVIDIA TEE）无状态隐私推理；
+    3. **Real-World Money (`realworld`)**：Ondo USDY 美债基准与 PAXG 黄金全天候宏观对冲 + NEP-366 零 Gas 摩擦；
+    4. **Agent Economy (`agents`)**：自然语言意图编译 + `/agent.md` 与 `/llms.txt` 机器可读协议清单。
+  - **Twitter / X 官方社区演示公开发布**：带官方 `@NEARProtocol` 与 `#NEARHackathon` 标签的 Demo 推文正式上线。
+- **NEAR Builders 官方生态目录榜首建档 (`nearbuilders.org/projects`)**：
+  - 项目在 NEAR Builders 全量项目索引中**荣登最新榜首（ALL ENTRIES #1）**，官方标识与标签全面激活。
+- **东方“河图洛书·主权金库”极简超级符号正式定稿**：
+  - **几何与哲学内核**：汲取洛书九宫格“戴九履一、左三右七、五居中央”与“纵横皆为十五”的数学绝对守恒哲理，暗合代币差额守恒（Token Diffs）与达里奥全天候四维风险平价（Risk Parity）。
+  - **色彩与生态对齐**：外围采用 **NEAR 官方翡翠绿（`#00EC97`）**，中央核心采用 **OmniYield 主权黄金（`#F59E0B`）**，兼具东方数理深度与世界级现代科技金融质感。
+  - **完整品牌资产库**：在 `brand_assets/logo_candidates/` 中建立 5 套候选库与矢量源文件归档，并部署为全局官方标识。
+- **全站视觉体系与国际化 (i18n) 深度精修**：
+  - **羊脂暖米白（Warm Beige / 太阳模式）自适应**：修复 Enterprise 企业级嵌入页面中的深黑底块与破裂图标问题，右侧 420px 嵌入式组件与全站主题实现动态丝滑联动。
+  - **USDC 官方矢量 Logo 链路修复**：确保全端与嵌入组件内的 USDC 官方标识圆润清晰呈现。
+  - **代码与策略选择器 100% 英文地道化**：消除 EN 英文模式下的任何中文残留，达到华尔街级双语标准。
+- **README 升级为机器与评委友好型复现指南**：
+  - 依照官方 `HACKATHON.md` 对 Codex / Claude Code 机器筛选器的要求，在 GitHub 首页置顶 **"Do X ➔ See Y" 快速复现矩阵**，确保自动化评分脚本与人类评委均能秒级复现。
+
+---
+
 ## [v2.4.0] - 2026-11-08 · 对标 NEAR 官方规范升级：NEAR AI Cloud 多轮记忆与机密计算、NEAR Intents 撮合规范与 NEP-366 无感代付
 
 ### 🌟 核心突破与官方生态标准对齐 (Official NEAR Ecosystem Alignment)
