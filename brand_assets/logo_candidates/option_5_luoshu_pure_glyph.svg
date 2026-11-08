@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background: Pure Slate-950 Obsidian (#0B0F19) -->
+    <rect id="bgRect" width="512" height="512" rx="112" fill="#0B0F19"/>
+
+    <!-- Exact OmniYield Primary Gradient: Emerald #10B981 -> Cyan #06B6D4 -> Blue #3B82F6 -->
+    <linearGradient id="omniGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+
+    <!-- Subtle Outer Border -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Background -->
+  <rect width="512" height="512" rx="112" fill="#0B0F19"/>
+  <rect width="510" height="510" x="1" y="1" rx="111" fill="none" stroke="url(#borderGrad)" stroke-width="2"/>
+
+  <!-- 2. The Purest Luoshu Glyph:
+       - An outer Diamond (The 4 Directions of Luoshu)
+       - An inner Core Dot (The Central 5 Sovereign Vault)
+       That's it. Only 2 geometric shapes. 100% clean, 100% recognizable.
+  -->
+  
+  <!-- Outer Sacred Diamond (Rhombus of 15 Balance) -->
+  <polygon points="256,96 416,256 256,416 96,256" 
+           fill="none" 
+           stroke="url(#omniGrad)" 
+           stroke-width="36" 
+           stroke-linejoin="round"/>
+
+  <!-- Center Core Dot (Central 5: The Sovereign Anchor) -->
+  <circle cx="256" cy="256" r="38" fill="url(#omniGrad)"/>
+</svg>
