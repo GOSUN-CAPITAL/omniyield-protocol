@@ -37,8 +37,13 @@ export default function EnterpriseEarnView({
   const [partnerId, setPartnerId] = useState("partner_phantom_alpha");
   const [selectedChain, setSelectedChain] = useState<"solana" | "arbitrum" | "base" | "all">("solana");
   const [selectedVault, setSelectedVault] = useState<"all-weather" | "usdc">("all-weather");
-  const [widgetTheme, setWidgetTheme] = useState<"dark" | "beige">("dark");
+  const [widgetTheme, setWidgetTheme] = useState<"dark" | "beige">(theme === "beige" ? "beige" : "dark");
   const [accentColor, setAccentColor] = useState<"emerald" | "cyan" | "purple" | "amber">("emerald");
+
+  // Keep widgetTheme synchronized when user toggles global site theme
+  React.useEffect(() => {
+    setWidgetTheme(theme === "beige" ? "beige" : "dark");
+  }, [theme]);
 
   // Code Tab State
   const [activeCodeTab, setActiveCodeTab] = useState<"react" | "html" | "api" | "telegram">("react");
