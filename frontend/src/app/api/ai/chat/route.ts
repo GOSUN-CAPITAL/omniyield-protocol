@@ -226,48 +226,71 @@ export async function POST(req: NextRequest) {
       return { card, cleanedText };
     };
 
-    // 1. Primary Engine: Official NEAR AI Cloud (GLM-5.3 Flash / Mistral / DeepSeek)
+    // 1. Primary Engine: Official NEAR AI Cloud (GLM-5.3 Flash / DeepSeek / Mistral with TEE support)
     const nearAiApiKey = process.env.NEAR_AI_API_KEY;
     if (nearAiApiKey) {
-      try {
-        const nearAiUrl = (process.env.NEAR_AI_BASE_URL || "https://cloud-api.near.ai/v1") + "/chat/completions";
-        const nearAiModel = process.env.NEAR_AI_MODEL || "z-ai/glm-5.3-flash";
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const nearAiUrl = (process.env.NEAR_AI_BASE_URL || "https://cloud-api.near.ai/v1") + "/chat/completions";
+      const primaryNearAiModel = process.env.NEAR_AI_MODEL || "z-ai/glm-5.3-flash";
+      const nearAiCandidates = [
+        primaryNearAiModel,
+        "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+        "google/gemini-2.5-flash",
+      ];
 
-        const nearAiRes = await fetch(nearAiUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${nearAiApiKey}`,
-          },
-          body: JSON.stringify({
-            model: nearAiModel,
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: prompt },
-            ],
-            temperature: 0.3,
-          }),
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
+      // Assemble full multi-turn conversational history compliant with OpenAI / NEAR AI spec
+      const formattedHistory = Array.isArray(history)
+        ? history
+            .filter((h: any) => h && (h.role === "user" || h.role === "assistant") && h.content)
+            .slice(-6) // Keep last 6 relevant turns to maintain high speed and prevent token saturation
+            .map((h: any) => ({
+              role: h.role,
+              content: typeof h.content === "string" ? h.content : JSON.stringify(h.content),
+            }))
+        : [];
 
-        if (nearAiRes.ok) {
-          const nearAiData = await nearAiRes.json();
-          const rawText = nearAiData.choices?.[0]?.message?.content;
-          if (rawText) {
-            successfulModel = `NEAR AI Cloud (${nearAiModel})`;
-            const parsed = parseActionCardFromResponse(rawText);
-            replyText = parsed.cleanedText;
-            actionCard = parsed.card;
+      const nearAiMessages = [
+        { role: "system", content: systemPrompt },
+        ...formattedHistory,
+        { role: "user", content: prompt },
+      ];
+
+      for (const modelCandidate of nearAiCandidates) {
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 9000);
+
+          const nearAiRes = await fetch(nearAiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${nearAiApiKey}`,
+            },
+            body: JSON.stringify({
+              model: modelCandidate,
+              messages: nearAiMessages,
+              temperature: 0.3,
+            }),
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+
+          if (nearAiRes.ok) {
+            const nearAiData = await nearAiRes.json();
+            const rawText = nearAiData.choices?.[0]?.message?.content;
+            if (rawText) {
+              successfulModel = `NEAR AI Cloud (${modelCandidate})`;
+              const parsed = parseActionCardFromResponse(rawText);
+              replyText = parsed.cleanedText;
+              actionCard = parsed.card;
+              break; // Success! Break candidate loop
+            }
+          } else {
+            const errBody = await nearAiRes.text();
+            console.warn(`NEAR AI Cloud (${modelCandidate}) failed: ${nearAiRes.status} - ${errBody}. Trying next candidate...`);
           }
-        } else {
-          const errBody = await nearAiRes.text();
-          console.warn(`NEAR AI Cloud (${nearAiRes.status}): ${errBody}. Falling back to Google Gemini...`);
+        } catch (nearErr: any) {
+          console.warn(`NEAR AI Cloud (${modelCandidate}) fetch error: ${nearErr.message}. Trying next candidate...`);
         }
-      } catch (nearErr: any) {
-        console.warn(`NEAR AI Cloud fetch failed: ${nearErr.message}. Falling back to Google Gemini...`);
       }
     }
 

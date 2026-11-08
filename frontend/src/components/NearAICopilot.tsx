@@ -444,6 +444,12 @@ export default function NearAICopilot({
     setIsThinking(true);
 
     try {
+      // Map existing messages to OpenAI / NEAR AI conversation history format
+      const historyPayload = messages.slice(-6).map((m) => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        content: m.text,
+      }));
+
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -454,6 +460,7 @@ export default function NearAICopilot({
           nusdBalance,
           omniUsdcBalance,
           lang,
+          history: historyPayload,
         }),
       });
 
@@ -842,7 +849,20 @@ export default function NearAICopilot({
             title={lang === "zh" ? "Pyth 预言机实时连接 (0.8s) · 宏观周期: 美联储降息宽松期 · 建议超配实物黄金与长期美债" : "Pyth Live Oracle (0.8s) · Macro Regime: Fed Rate-Cut Cycle · Favor Gold & Treasuries"}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>{lang === "zh" ? "Pyth 在线 (0.8s) · 降息宽松期" : "Pyth 0.8s · Fed Easing"}</span>
+            <span>{lang === "zh" ? "Pyth 0.8s · 降息宽松期" : "Pyth 0.8s · Fed Easing"}</span>
+          </div>
+
+          {/* NEAR AI Confidential Computing (TEE) Pill */}
+          <div
+            className={`hidden lg:flex items-center space-x-1.5 h-7 px-2.5 rounded-lg text-[10px] font-mono font-bold border whitespace-nowrap flex-shrink-0 ${
+              theme === "beige"
+                ? "bg-cyan-50 text-cyan-800 border-cyan-300"
+                : "bg-cyan-950/30 text-cyan-400 border-cyan-500/30"
+            }`}
+            title="NEAR AI Cloud Confidential Computing (TEE Enclave Verified)"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+            <span>NEAR AI TEE 🛡️</span>
           </div>
 
           {/* Quick Dual-Vault Yield Badges - Unified Twin-Pill Container (h-7) */}
