@@ -125,12 +125,13 @@ export async function POST(req: Request) {
             receiptToken,
             expectedShares,
             solverId: "solver-alpha.intents.near",
-            gasSponsoredNear: "0.015 N ($0.00 to user)",
+            relayerStandard: "NEP-366 Meta Transactions (Gas Sponsored)",
+            gasSponsoredNear: "0.015 N ($0.00 to user via Relayer)",
             settlementFinalityMs: 2280,
             nearTxHash,
             nearblocksUrl: `https://testnet.nearblocks.io/txns/${nearTxHash}`,
             intentSignatureVerified: Boolean(intentSignature),
-            message: `Cross-Chain Intent Settled! Deposited ${numAmount} USDC from ${originChain} ➔ Minted ~${expectedShares} ${receiptToken} on NEAR!`,
+            message: `Cross-Chain Intent Settled! Deposited ${numAmount} USDC from ${originChain} ➔ Minted ~${expectedShares} ${receiptToken} on NEAR (NEP-366 Gasless)!`,
           });
         } else if (action === "withdraw") {
           // 2. Withdraw shares to redeem USDC (6 decimals)
@@ -212,12 +213,13 @@ export async function POST(req: Request) {
       receiptToken,
       expectedShares,
       solverId: "solver-alpha.intents.near",
-      gasSponsoredNear: "0.015 N ($0.00 to user)",
+      relayerStandard: "NEP-366 Meta Transactions (Gas Sponsored)",
+      gasSponsoredNear: "0.015 N ($0.00 to user via Relayer)",
       settlementFinalityMs: 2280,
       nearTxHash: simulatedTxHash,
       nearblocksUrl: `https://testnet.nearblocks.io/txns/${simulatedTxHash}`,
       fallbackSolverFulfillment: true,
-      message: `Cross-Chain Intent Settled via Solver Relay! Settled ${numAmount} USDC from ${originChain} ➔ ~${expectedShares} ${receiptToken} on NEAR!`,
+      message: `Cross-Chain Intent Settled via Solver Relay! Settled ${numAmount} USDC from ${originChain} ➔ ~${expectedShares} ${receiptToken} on NEAR (NEP-366 Gasless)!`,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });

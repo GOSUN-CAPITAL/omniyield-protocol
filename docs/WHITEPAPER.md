@@ -86,9 +86,10 @@ flowchart TD
 
     subgraph Tier2 ["Tier 2: Vault Connective Tissue (NEAR Sovereign Hub)"]
         SDK["@omniyield/earn-sdk\n(Headless API / React Widget)"]
-        Intents["NEAR Intents Clearing Engine\n(Solver Network & Gas Abstraction)"]
+        Intents["NEAR Intents Clearing Engine\n(Solver Network & NEP-366 Meta Transactions)"]
+        MPC["NEAR Chain Signatures\n(v1.signer Threshold MPC Network)"]
         Ledger["Sovereign Double-Entry Ledger\n(NEP-141 / ERC-4626 / Real Deductions)"]
-        DualVault["Dual-Vault State Engine\n(NUSD Core & OmniUSDC All-Weather)"]
+        DualVault["Dual-Vault State Engine\n(Nightshade 2.0 Stateless Validation)"]
     end
 
     subgraph Tier3 ["Tier 3: Curation & Risk Management (Multi-Curator Registry)"]
@@ -340,7 +341,9 @@ The core contracts have been engineered with production-grade modularity:
 * **Repository**: `contracts/src/lib.rs`, `market.rs`, `events.rs`, `types.rs`, `vault.rs`
 * **Compilation Target**: `wasm32-unknown-unknown` (Binary footprint: 451 KB)
 * **Test Suite**: 100% passing tests covering initialization, Morpho queue prioritization, cap saturation, yield compounding, allocator execution, and sub-vault isolation.
-* **Standard Compatibility**: Full adherence to **NEP-141**, **NEP-148**, **NEP-297**, and semantic parity with **ERC-4626**.
+* **Standard Compatibility**: Full adherence to **NEP-141** (Fungible Token), **NEP-145** (Storage Management), **NEP-366** (Meta Transactions & Relayers), **NEP-297** (Events Format), and semantic parity with **ERC-4626** (Tokenized Vault Standard).
+* **Consensus & Sharding Paradigm**: Powered by NEAR **Nightshade 2.0 (Stateless Validation)**, achieving sub-second block finality with sub-cent transaction fees.
+* **Cross-Chain Primitives**: Direct integration with NEAR **Chain Signatures (`v1.signer` MPC network)** for bridge-less multi-chain asset custody.
 
 ---
 
