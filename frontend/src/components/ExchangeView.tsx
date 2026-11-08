@@ -561,22 +561,34 @@ export default function ExchangeView({
               <div className="flex items-center justify-between font-bold">
                 <span className="flex items-center space-x-1.5">
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>{lang === "zh" ? "跨链意图撮合成功！" : "Intent Exchange Confirmed!"}</span>
+                  <span>{lang === "zh" ? "NEAR Intents 意图原子撮合成功！" : "NEAR Intents Settled!"}</span>
                 </span>
-                <a
-                  href={swapResult.nearblocksUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center space-x-1 underline hover:text-white"
-                >
-                  <span>NearBlocks</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                <div className="flex items-center space-x-3">
+                  <a
+                    href="https://docs.near-intents.org"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-slate-400 hover:text-emerald-300 flex items-center space-x-1"
+                    title="NEAR Intents Official Docs"
+                  >
+                    <span>Spec</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <a
+                    href={swapResult.nearblocksUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center space-x-1 underline hover:text-white"
+                  >
+                    <span>NearBlocks</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
               </div>
               <p className="leading-relaxed text-slate-300">
                 {lang === "zh"
-                  ? `已成功将 ${swapResult.soldAmount} ${swapResult.soldAsset} (${swapResult.soldChain}) 经由 NEAR Intents 清算为 ~${swapResult.receivedAmount} ${swapResult.receivedAsset} (${swapResult.receivedChain})！`
-                  : `Successfully settled ${swapResult.soldAmount} ${swapResult.soldAsset} on ${swapResult.soldChain} into ~${swapResult.receivedAmount} ${swapResult.receivedAsset} on ${swapResult.receivedChain} via solver network.`}
+                  ? `已成功将 ${swapResult.soldAmount} ${swapResult.soldAsset} (${swapResult.soldChain}) 经由 NEAR Intents (Token Diff 守恒验证) 清算为 ~${swapResult.receivedAmount} ${swapResult.receivedAsset} (${swapResult.receivedChain})！`
+                  : `Successfully settled ${swapResult.soldAmount} ${swapResult.soldAsset} on ${swapResult.soldChain} into ~${swapResult.receivedAmount} ${swapResult.receivedAsset} on ${swapResult.receivedChain} via NEAR Intents atomic verifier.`}
               </p>
             </div>
           )}
