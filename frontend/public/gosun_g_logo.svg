@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080C14"/>
+      <stop offset="50%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#04060A"/>
+    </linearGradient>
+
+    <!-- Electric Neon Emerald to Cyan Gradient -->
+    <linearGradient id="gBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00FFA3"/>
+      <stop offset="50%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+
+    <!-- Core Vault Horizontal Bar Gradient -->
+    <linearGradient id="barGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00FFA3"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+
+    <!-- Subtle Inner Radial Glow -->
+    <radialGradient id="ambientGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#00FFA3" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#080C14" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Glow Filter for Vector Precision -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- 1. Deep Matte Obsidian Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect width="512" height="512" rx="112" fill="url(#ambientGlow)"/>
+  <rect width="510" height="510" x="1" y="1" rx="111" fill="none" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.25"/>
+
+  <!-- 2. The Iconic 'G' Monogram: Precision Geometric Infinite Vault Loop -->
+  <!-- Outer Sweep of the G -->
+  <path d="M 364 164 
+           A 152 152 0 1 0 380 324 
+           L 380 256 
+           L 256 256" 
+        fill="none" 
+        stroke="url(#gBrandGrad)" 
+        stroke-width="52" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"
+        filter="url(#softGlow)"/>
+
+  <!-- 3. Core Vault Keystone (Horizontal Arrow / Prism crossbar symbolizing Yield Growth) -->
+  <path d="M 256 256 L 380 256" 
+        fill="none" 
+        stroke="url(#barGrad)" 
+        stroke-width="52" 
+        stroke-linecap="round"/>
+
+  <!-- 4. Modernist Diamond Core Focal Dot (Institutional Precision) -->
+  <circle cx="380" cy="164" r="14" fill="#00FFA3"/>
+  <circle cx="380" cy="164" r="7" fill="#FFFFFF"/>
+</svg>
