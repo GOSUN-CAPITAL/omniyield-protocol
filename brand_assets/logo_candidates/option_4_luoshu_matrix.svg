@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="luoshuBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05070D"/>
+      <stop offset="50%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#030408"/>
+    </linearGradient>
+
+    <!-- Celestial Jade Emerald to Cyan (Yang Lines / Heavenly Flow) -->
+    <linearGradient id="celestialJade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00FFA3"/>
+      <stop offset="60%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+
+    <!-- Solar Gold (Emperor Core 5 / Sovereign Center) -->
+    <linearGradient id="solarGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF275"/>
+      <stop offset="50%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+
+    <!-- Radial Nebula Glow for Taiji / Central 5 Hub -->
+    <radialGradient id="centerNebula" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00FFA3" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#10B981" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Glow Filter -->
+    <filter id="luoshuGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- 1. Deep Celestial Black Canvas with Subtle Border -->
+  <rect width="1024" height="1024" rx="220" fill="url(#luoshuBg)"/>
+  <circle cx="512" cy="512" r="440" fill="url(#centerNebula)"/>
+  <rect width="1020" height="1020" x="2" y="2" rx="218" fill="none" stroke="#10B981" stroke-width="2" stroke-opacity="0.25"/>
+
+  <!-- 2. Sacred Hetu-Luoshu Nine-Palace Grid Geometry (3x3 Matrix Invariant) -->
+  <!-- Nine Palace Coordinates:
+       (280, 280)=4 | (512, 280)=9 | (744, 280)=2
+       (280, 512)=3 | (512, 512)=5 | (744, 512)=7
+       (280, 744)=8 | (512, 744)=1 | (744, 744)=6
+  -->
+
+  <!-- Subtle Constellation Link Lines (Energy Network · Sum=15 Perfect Balance) -->
+  <g stroke="#10B981" stroke-width="4" stroke-opacity="0.35" stroke-dasharray="8 8">
+    <!-- Outer boundary square -->
+    <path d="M 280 280 L 744 280 L 744 744 L 280 744 Z"/>
+    <!-- Diagonal cross (Diamond of 15 balance) -->
+    <path d="M 512 280 L 744 512 L 512 744 L 280 512 Z"/>
+    <!-- Central axes -->
+    <path d="M 512 280 L 512 744"/>
+    <path d="M 280 512 L 744 512"/>
+  </g>
+
+  <!-- 3. Dynamic Luoshu Vortex Loop (Harmonic Flow around Central 5) -->
+  <circle cx="512" cy="512" r="300" fill="none" stroke="url(#celestialJade)" stroke-width="6" stroke-opacity="0.2"/>
+  <circle cx="512" cy="512" r="230" fill="none" stroke="url(#celestialJade)" stroke-width="14" stroke-dasharray="180 70" stroke-linecap="round" filter="url(#luoshuGlow)"/>
+
+  <!-- 4. The Nine Matrix Star Nodes (Luoshu Constellation) -->
+  
+  <!-- North 1 (Water · 坎一): Bottom (512, 744) -->
+  <circle cx="512" cy="744" r="18" fill="#00FFA3" filter="url(#luoshuGlow)"/>
+  <circle cx="512" cy="744" r="9" fill="#FFFFFF"/>
+
+  <!-- South 9 (Fire · 离九): Top (512, 280) -->
+  <circle cx="512" cy="280" r="24" fill="#00FFA3" filter="url(#luoshuGlow)"/>
+  <circle cx="512" cy="280" r="12" fill="#FFFFFF"/>
+
+  <!-- East 3 (Wood · 震三): Left (280, 512) -->
+  <circle cx="280" cy="512" r="20" fill="#00FFA3" filter="url(#luoshuGlow)"/>
+  <circle cx="280" cy="512" r="10" fill="#FFFFFF"/>
+
+  <!-- West 7 (Metal · 兑七): Right (744, 512) -->
+  <circle cx="744" cy="512" r="20" fill="#00FFA3" filter="url(#luoshuGlow)"/>
+  <circle cx="744" cy="512" r="10" fill="#FFFFFF"/>
+
+  <!-- Southeast 4 (巽四): Top-Left (280, 280) -->
+  <circle cx="280" cy="280" r="16" fill="#10B981"/>
+  <circle cx="280" cy="280" r="7" fill="#FFFFFF"/>
+
+  <!-- Southwest 2 (坤二): Top-Right (744, 280) -->
+  <circle cx="744" cy="280" r="16" fill="#10B981"/>
+  <circle cx="744" cy="280" r="7" fill="#FFFFFF"/>
+
+  <!-- Northeast 8 (艮八): Bottom-Left (280, 744) -->
+  <circle cx="280" cy="744" r="16" fill="#10B981"/>
+  <circle cx="280" cy="744" r="7" fill="#FFFFFF"/>
+
+  <!-- Northwest 6 (乾六): Bottom-Right (744, 744) -->
+  <circle cx="744" cy="744" r="16" fill="#10B981"/>
+  <circle cx="744" cy="744" r="7" fill="#FFFFFF"/>
+
+  <!-- 5. Central 5 (Earth · 中五 · Sovereign Vault Core): (512, 512) -->
+  <!-- Outer Solar Radiant Halo -->
+  <circle cx="512" cy="512" r="72" fill="none" stroke="url(#solarGold)" stroke-width="8" stroke-dasharray="24 16"/>
+  <!-- Central Sovereign Seal Core -->
+  <circle cx="512" cy="512" r="48" fill="url(#solarGold)" filter="url(#luoshuGlow)"/>
+  <circle cx="512" cy="512" r="22" fill="#FFFFFF"/>
+
+  <!-- 4 Harmonic Orbiting Pearl Nodes of 5 -->
+  <circle cx="512" cy="448" r="10" fill="#FFD700"/>
+  <circle cx="512" cy="576" r="10" fill="#FFD700"/>
+  <circle cx="448" cy="512" r="10" fill="#FFD700"/>
+  <circle cx="576" cy="512" r="10" fill="#FFD700"/>
+
+  <!-- 6. Modern Top Brand Micro-Signature -->
+  <text x="512" y="930" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="900" letter-spacing="12" fill="#10B981" opacity="0.85">OMNIYIELD · 洛书矩阵</text>
+</svg>
