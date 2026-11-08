@@ -34,10 +34,11 @@ import {
   Layers,
   Activity,
   FileText,
+  Code2,
 } from "lucide-react";
 import GovernanceIcon from "./GovernanceIcon";
 
-export type NavTabType = "vaults" | "exchange" | "markets" | "portfolio" | "ai-copilot";
+export type NavTabType = "vaults" | "exchange" | "markets" | "portfolio" | "ai-copilot" | "enterprise";
 export type BacksideDomainType = "vaults" | "exchange" | "markets" | "portfolio" | "ai";
 
 interface AppSidebarProps {
@@ -535,6 +536,42 @@ export default function AppSidebar({
               />
               {!collapsed && (
                 <span className="text-xs font-semibold">NEAR AI</span>
+              )}
+            </button>
+
+            {/* 6. 企业级接入 (Enterprise Earn B2B SDK) */}
+            <button
+              type="button"
+              onClick={() => onSelectNav("enterprise")}
+              className={`w-full flex items-center rounded-xl px-3 py-2.5 transition cursor-pointer ${
+                activeNav === "enterprise"
+                  ? theme === "beige"
+                    ? "bg-emerald-600/15 border border-emerald-600/40 text-emerald-900 font-bold shadow-sm"
+                    : "bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 font-bold shadow-sm shadow-emerald-500/10"
+                  : theme === "beige"
+                  ? "text-slate-700 hover:bg-black/5 hover:text-black border border-transparent"
+                  : "text-slate-300 hover:bg-slate-900 hover:text-white border border-transparent"
+              } ${collapsed ? "justify-center" : "space-x-3"}`}
+              title={lang === "zh" ? "企业接入 (B2B SDK)" : "Enterprise Earn (SDK)"}
+            >
+              <Code2
+                className={`w-5 h-5 flex-shrink-0 transition-colors ${
+                  activeNav === "enterprise"
+                    ? theme === "beige"
+                      ? "text-emerald-800"
+                      : "text-emerald-400"
+                    : theme === "beige"
+                    ? "text-slate-700 group-hover:text-emerald-800"
+                    : "text-slate-400 group-hover:text-emerald-400"
+                }`}
+              />
+              {!collapsed && (
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-semibold">{lang === "zh" ? "企业接入" : "Enterprise"}</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">
+                    B2B
+                  </span>
+                </div>
               )}
             </button>
           </>

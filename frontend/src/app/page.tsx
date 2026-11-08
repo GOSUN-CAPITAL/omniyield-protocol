@@ -35,6 +35,7 @@ import NearAICopilot from "../components/NearAICopilot";
 import ExchangeView from "../components/ExchangeView";
 import UserSettingsModal from "../components/UserSettingsModal";
 import MarketsView from "../components/MarketsView";
+import EnterpriseEarnView from "../components/EnterpriseEarnView";
 import GovernanceIcon from "../components/GovernanceIcon";
 
 const INSTITUTIONAL_ROLES = [
@@ -820,6 +821,8 @@ export default function Home() {
                   ? (lang === "zh" ? "我的投资组合" : "MY PORTFOLIO")
                   : activeNav === "ai-copilot"
                   ? "NEAR AI COPILOT"
+                  : activeNav === "enterprise"
+                  ? (lang === "zh" ? "企业接入 (B2B SDK)" : "ENTERPRISE EARN")
                   : activeNav === "markets"
                   ? (lang === "zh" ? "市场行情" : "YIELD MARKETS")
                   : activeVault === "all-weather"
@@ -1043,6 +1046,12 @@ export default function Home() {
                   usdcBalance={usdcBalance}
                   nearBalance={nearBalance}
                   onTradeSuccess={() => refreshAllBalances(connectedAccount)}
+                  lang={lang}
+                  theme={theme}
+                />
+              ) : activeNav === "enterprise" ? (
+                <EnterpriseEarnView
+                  connectedAccount={connectedAccount}
                   lang={lang}
                   theme={theme}
                 />
