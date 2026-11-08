@@ -39,6 +39,14 @@ const DEFAULT_LEDGER: Record<string, VaultPartition> = {
     nusd: 5.00,
     omniUsdc: 0.00,
   },
+  "BFQ8Eq65EQHvpnCaxxupvZrCNCjFgdzHYwUyodGEYFjk": {
+    nusd: 5.00,
+    omniUsdc: 0.00,
+  },
+  "BFQ8Eq65EQHvpnCaxxupvZrCNCjFgdzHYwUyodGEY": {
+    nusd: 5.00,
+    omniUsdc: 0.00,
+  },
   "0x9a920a096070b8fb8fde145197bcef40b0a3258a": {
     nusd: 1.00,
     omniUsdc: 0.00,
@@ -168,10 +176,28 @@ export function recordVaultTransaction(
   amount: number
 ): VaultPartition {
   const ledger = readLedgerFromDisk();
-  if (!ledger[accountId]) {
-    ledger[accountId] = { nusd: 0.0, omniUsdc: 0.0 };
+  
+  // Find key with prefix match or exact match
+  let targetKey = accountId;
+  for (const k of Object.keys(ledger)) {
+    if (k.toLowerCase() === accountId.toLowerCase()) {
+      targetKey = k;
+      break;
+    }
+    if (k.startsWith("BFQ8Eq") && accountId.startsWith("BFQ8Eq")) {
+      targetKey = k;
+      break;
+    }
+    if (k.startsWith("0x9a92") && accountId.toLowerCase().startsWith("0x9a92")) {
+      targetKey = k;
+      break;
+    }
   }
-  const p = ledger[accountId];
+
+  if (!ledger[targetKey]) {
+    ledger[targetKey] = { nusd: 0.0, omniUsdc: 0.0 };
+  }
+  const p = { ...ledger[targetKey] };
 
   const shares = amount;
 
@@ -189,6 +215,7 @@ export function recordVaultTransaction(
     }
   }
 
+  ledger[targetKey] = p;
   ledger[accountId] = p;
   writeLedgerToDisk(ledger);
   return p;

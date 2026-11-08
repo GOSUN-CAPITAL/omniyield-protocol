@@ -409,8 +409,7 @@ export default function NearAICopilot({
 
       if (onBalanceUpdate) {
         onBalanceUpdate(targetVault, isWithdraw ? -targetAmount : targetAmount);
-      }
-      if (onRefreshBalances) {
+      } else if (onRefreshBalances) {
         await onRefreshBalances();
       }
       if (onLog) {

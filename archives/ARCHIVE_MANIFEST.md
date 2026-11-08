@@ -1,9 +1,9 @@
 # 📦 OmniYield Protocol 归档记录清单 (Archive Manifest)
 
-- **归档时间 (Timestamp)**: 2026-11-08T00:30:10.747Z (2026/11/7 19:30:06)
-- **归档文件 (Archive File)**: `OmniYield_Release_20261107_193006.zip`
+- **归档时间 (Timestamp)**: 2026-11-08T01:03:06.891Z (2026/11/7 20:03:02)
+- **归档文件 (Archive File)**: `OmniYield_Release_20261107_200302.zip`
 - **压缩包大小 (Archive Size)**: **0.80 MB**
-- **SHA-256 校验哈希**: `1b981d4ae95bcdf7bf84ce9c3977cf83eb940417fe4f643b45a7e6fbc34d7f2a`
+- **SHA-256 校验哈希**: `02eda7881277ecc78e94598763677db45e192cd63158f3d8953795b4811cc033`
 - **归档版本**: `v1.0.0-hackathon-final-release`
 
 ---

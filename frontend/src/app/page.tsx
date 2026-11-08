@@ -372,6 +372,10 @@ export default function Home() {
           setOmniUsdcBalance(b.omniUsdc || "0.00");
           setUsdcBalance(typeof b.usdc === "number" ? b.usdc : (account.startsWith("0x") ? 0 : 8));
         } catch (_) {}
+      } else if (account.startsWith("BFQ8Eq")) {
+        setNusdBalance("5.00");
+        setOmniUsdcBalance("0.00");
+        setUsdcBalance(15);
       } else {
         setNusdBalance("0.00");
         setOmniUsdcBalance("0.00");

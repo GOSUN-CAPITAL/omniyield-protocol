@@ -628,3 +628,4 @@ bot.onText(/\\/earn/, (msg) => {
     </div>
   );
 }
+

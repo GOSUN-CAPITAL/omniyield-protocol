@@ -128,6 +128,25 @@ pub fn emit_emergency_pause_event(market_id: &str, caller: &AccountId, is_paused
     log_event("nep297", "1.0.0", "omniflow_emergency_circuit_breaker", &data);
 }
 
+pub fn emit_curator_registered_event(curator_id: &AccountId, name: &str, max_allocation_cap: u128) {
+    let data = serde_json::json!({
+        "curator_id": curator_id,
+        "name": name,
+        "max_allocation_cap": U128(max_allocation_cap),
+    });
+    log_event("nep297", "1.0.0", "omniyield_curator_registered", &data);
+}
+
+pub fn emit_sub_vault_created_event(sub_vault_id: &str, curator_id: &AccountId, name: &str, max_debt_ceiling: u128) {
+    let data = serde_json::json!({
+        "sub_vault_id": sub_vault_id,
+        "curator_id": curator_id,
+        "name": name,
+        "max_debt_ceiling": U128(max_debt_ceiling),
+    });
+    log_event("nep297", "1.0.0", "omniyield_sub_vault_created", &data);
+}
+
 fn log_event(standard: &'static str, version: &'static str, event_name: &str, data: &serde_json::Value) {
     let log = EventLog {
         standard,

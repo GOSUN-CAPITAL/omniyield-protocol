@@ -16,8 +16,8 @@ use crate::market::Market;
 use crate::socket::{SocketDescriptor, SocketKind, SocketStatus};
 use crate::token::{default_nusd_metadata, FungibleTokenMetadata, StorageBalance, StorageBalanceBounds};
 use crate::types::{
-    AllocationInput, FeeConfig, MarketId, PendingCapChange, VaultSummary, DECIMAL_OFFSET, DEFAULT_RHEA_CAP,
-    DEFAULT_RWA_CAP, DEFAULT_TIMELOCK_DURATION_NS,
+    AllocationInput, CuratorConfig, FeeConfig, MarketId, PendingCapChange, VaultSummary, WhitelabelSubVault,
+    DECIMAL_OFFSET, DEFAULT_RHEA_CAP, DEFAULT_RWA_CAP, DEFAULT_TIMELOCK_DURATION_NS,
 };
 use crate::vault::MorphoVaultEngine;
 
@@ -42,6 +42,8 @@ pub struct OmniYieldVault {
     pub pending_cap_changes: UnorderedMap<MarketId, PendingCapChange>,
     pub supply_queue: Vec<MarketId>,
     pub withdraw_queue: Vec<MarketId>,
+    pub curators: UnorderedMap<AccountId, CuratorConfig>,
+    pub sub_vaults: UnorderedMap<String, WhitelabelSubVault>,
 }
 
 #[near]
@@ -73,7 +75,23 @@ impl OmniYieldVault {
             pending_cap_changes: UnorderedMap::new(b"p"),
             supply_queue: Vec::new(),
             withdraw_queue: Vec::new(),
+            curators: UnorderedMap::new(b"c"),
+            sub_vaults: UnorderedMap::new(b"v"),
         };
+
+        // Register default Master Curator
+        this.curators.insert(
+            &this.curator_id,
+            &CuratorConfig {
+                curator_id: this.curator_id.clone(),
+                name: "OmniYield Master Risk Curator".to_string(),
+                is_active: true,
+                max_allocation_cap: U128(100_000_000 * DECIMAL_OFFSET),
+                approved_markets: vec!["rhea-lending".to_string(), "ondo-rwa".to_string()],
+                fee_share_bps: 3000,
+                registered_at_block: env::block_height(),
+            },
+        );
 
         // Auto-register owner storage
         this.storage_deposits.insert(&owner_id, &STORAGE_MIN_BOUND.as_yoctonear());
@@ -758,6 +776,187 @@ impl OmniYieldVault {
             require!(self.markets.get(m_id).is_some(), "Invalid market in queue");
         }
         self.withdraw_queue = new_queue;
+    }
+
+    // =========================================================================
+    // Veda Multi-Curator & Whitelabel Sub-Vault Registry (Option B Implementation)
+    // =========================================================================
+
+    /// Register a specialized external or AI risk curator (e.g. Steakhouse, Bitwise, Sentora)
+    pub fn register_curator(
+        &mut self,
+        curator_id: AccountId,
+        name: String,
+        max_allocation_cap: U128,
+        approved_markets: Vec<MarketId>,
+        fee_share_bps: u32,
+    ) {
+        let caller = env::predecessor_account_id();
+        require!(
+            caller == self.owner_id || caller == self.curator_id,
+            "Unauthorized: only DAO or Master Curator can register new curators"
+        );
+        require!(fee_share_bps <= 5000, "Curator fee share exceeds max limit (50%)");
+
+        for m_id in &approved_markets {
+            require!(self.markets.get(m_id).is_some(), "Approved market does not exist in vault");
+        }
+
+        let config = CuratorConfig {
+            curator_id: curator_id.clone(),
+            name: name.clone(),
+            is_active: true,
+            max_allocation_cap,
+            approved_markets,
+            fee_share_bps,
+            registered_at_block: env::block_height(),
+        };
+
+        self.curators.insert(&curator_id, &config);
+        emit_curator_registered_event(&curator_id, &name, max_allocation_cap.0);
+    }
+
+    /// Update curator risk ceiling and active status
+    pub fn update_curator_limits(
+        &mut self,
+        curator_id: AccountId,
+        max_allocation_cap: U128,
+        is_active: bool,
+    ) {
+        let caller = env::predecessor_account_id();
+        require!(
+            caller == self.owner_id || caller == self.guardian_id || caller == self.curator_id,
+            "Unauthorized"
+        );
+
+        let mut config = self.curators.get(&curator_id).expect("Curator not found");
+        config.max_allocation_cap = max_allocation_cap;
+        config.is_active = is_active;
+        self.curators.insert(&curator_id, &config);
+    }
+
+    /// List all registered institutional curators
+    pub fn get_curators(&self) -> Vec<CuratorConfig> {
+        let mut list = Vec::new();
+        let vec = self.curators.values_as_vector();
+        for i in 0..vec.len() {
+            if let Some(c) = vec.get(i) {
+                list.push(c);
+            }
+        }
+        list
+    }
+
+    /// Create an institutional Whitelabel Sub-Vault (enabling partners to customize fees & asset whitelists)
+    pub fn create_sub_vault(
+        &mut self,
+        sub_vault_id: String,
+        name: String,
+        curator_id: AccountId,
+        distributor_partner_id: Option<String>,
+        management_fee_bps: u32,
+        performance_fee_bps: u32,
+        fee_recipient: AccountId,
+        allowed_markets: Vec<MarketId>,
+        max_debt_ceiling: U128,
+    ) {
+        let caller = env::predecessor_account_id();
+        require!(
+            caller == self.owner_id || caller == self.curator_id || caller == curator_id,
+            "Unauthorized to create sub-vault"
+        );
+        require!(self.sub_vaults.get(&sub_vault_id).is_none(), "Sub-vault ID already exists");
+        require!(management_fee_bps <= 500, "Management fee exceeds 500 bps (5%)");
+        require!(performance_fee_bps <= 3000, "Performance fee exceeds 3000 bps (30%)");
+
+        // Verify curator is registered and active
+        let curator_cfg = self.curators.get(&curator_id).expect("Curator is not registered");
+        require!(curator_cfg.is_active, "Assigned curator is currently inactive");
+
+        // Verify all allowed markets exist
+        for m_id in &allowed_markets {
+            require!(self.markets.get(m_id).is_some(), "Allowed market does not exist");
+        }
+
+        let sub_vault = WhitelabelSubVault {
+            sub_vault_id: sub_vault_id.clone(),
+            name: name.clone(),
+            curator_id: curator_id.clone(),
+            distributor_partner_id,
+            total_assets: U128(0),
+            total_shares: U128(0),
+            management_fee_bps,
+            performance_fee_bps,
+            fee_recipient,
+            allowed_markets,
+            max_debt_ceiling,
+            is_paused: false,
+            created_at_block: env::block_height(),
+        };
+
+        self.sub_vaults.insert(&sub_vault_id, &sub_vault);
+        emit_sub_vault_created_event(&sub_vault_id, &curator_id, &name, max_debt_ceiling.0);
+    }
+
+    /// Emergency pause / resume switch for a sub-vault
+    pub fn set_sub_vault_pause(&mut self, sub_vault_id: String, is_paused: bool) {
+        let caller = env::predecessor_account_id();
+        let mut sub_vault = self.sub_vaults.get(&sub_vault_id).expect("Sub-vault not found");
+        require!(
+            caller == self.owner_id || caller == self.guardian_id || caller == sub_vault.curator_id,
+            "Unauthorized to toggle sub-vault pause"
+        );
+        sub_vault.is_paused = is_paused;
+        self.sub_vaults.insert(&sub_vault_id, &sub_vault);
+    }
+
+    /// Get details of a single sub-vault
+    pub fn get_sub_vault(&self, sub_vault_id: String) -> Option<WhitelabelSubVault> {
+        self.sub_vaults.get(&sub_vault_id)
+    }
+
+    /// Query all whitelabel sub-vaults
+    pub fn get_all_sub_vaults(&self) -> Vec<WhitelabelSubVault> {
+        let mut list = Vec::new();
+        let vec = self.sub_vaults.values_as_vector();
+        for i in 0..vec.len() {
+            if let Some(v) = vec.get(i) {
+                list.push(v);
+            }
+        }
+        list
+    }
+
+    /// Rebalance assets strictly within an institutional sub-vault
+    pub fn reallocate_sub_vault(&mut self, sub_vault_id: String, allocations: Vec<AllocationInput>) {
+        let caller = env::predecessor_account_id();
+        let sub_vault = self.sub_vaults.get(&sub_vault_id).expect("Sub-vault not found");
+        require!(!sub_vault.is_paused, "Sub-vault is paused");
+        require!(
+            caller == sub_vault.curator_id || caller == self.owner_id,
+            "Unauthorized: only assigned curator or owner can reallocate sub-vault"
+        );
+
+        let mut total_req: u128 = 0;
+        for alloc in &allocations {
+            require!(
+                sub_vault.allowed_markets.contains(&alloc.market_id),
+                "Allocation target not in sub-vault allowed markets"
+            );
+            total_req += alloc.amount.0;
+        }
+
+        require!(
+            total_req <= sub_vault.max_debt_ceiling.0,
+            "Allocations exceed sub-vault maximum debt ceiling"
+        );
+
+        // Apply reallocation to underlying markets
+        MorphoVaultEngine::validate_and_apply_reallocation(
+            &allocations,
+            self.total_assets,
+            &mut self.markets,
+        );
     }
 
     // =========================================================================

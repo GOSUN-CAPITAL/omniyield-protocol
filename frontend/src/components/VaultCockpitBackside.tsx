@@ -37,6 +37,7 @@ import {
   Bot,
   FileText,
   Terminal,
+  Plus,
 } from "lucide-react";
 import GovernanceIcon, { GovernanceIconName } from "./GovernanceIcon";
 import type { BacksideDomainType } from "./AppSidebar";
@@ -239,6 +240,59 @@ export default function VaultCockpitBackside({
   const [targetReserveRatio, setTargetReserveRatio] = useState("15");
   const [whaleQueueThreshold, setWhaleQueueThreshold] = useState("50000");
 
+  // Veda Paradigm Option B: Multi-Curator & Whitelabel Sub-Vault Registry State
+  const [curatorList, setCuratorList] = useState([
+    {
+      id: "curator.omniyield-vault.testnet",
+      name: "OmniYield Master Risk Curator",
+      cap: 100000000,
+      active: true,
+      markets: ["rhea-lending", "ondo-rwa"],
+      feeShare: 30,
+    },
+    {
+      id: "steakhouse.near",
+      name: "Steakhouse Financial Risk Engine",
+      cap: 50000000,
+      active: true,
+      markets: ["rhea-lending", "ondo-rwa"],
+      feeShare: 25,
+    },
+    {
+      id: "bitwise.near",
+      name: "Bitwise RWA Alpha Engine",
+      cap: 25000000,
+      active: true,
+      markets: ["ondo-rwa"],
+      feeShare: 20,
+    },
+  ]);
+
+  const [subVaultList, setSubVaultList] = useState([
+    {
+      id: "sub_vault_steakhouse_usdc",
+      name: "Steakhouse USD Core Alpha",
+      curator: "steakhouse.near",
+      partnerId: "partner_phantom_alpha",
+      assets: 2500000,
+      maxDebt: 10000000,
+      mgmtFee: 0.5,
+      perfFee: 15,
+      paused: false,
+    },
+    {
+      id: "sub_vault_bitwise_rwa",
+      name: "Bitwise All-Weather RWA Institutional",
+      curator: "bitwise.near",
+      partnerId: "partner_fintech_asia",
+      assets: 1200000,
+      maxDebt: 5000000,
+      mgmtFee: 0.75,
+      perfFee: 18,
+      paused: false,
+    },
+  ]);
+
   // 9. AI Agent Infrastructure (API Keys, Dynamic Polling, Skills, Persona, Learning, Quotas, Kill Switch)
   const [aiProvider, setAiProvider] = useState<"near-ai" | "deepseek" | "claude" | "openai">("near-ai");
   const [apiKeyInput, setApiKeyInput] = useState("");
@@ -428,6 +482,23 @@ export default function VaultCockpitBackside({
     setIsKeySaved(true);
     onLog(`[AI Agent] API Key for provider '${aiProvider}' encrypted & stored in local security enclave.`);
     setTimeout(() => setIsKeySaved(false), 3000);
+  };
+
+  const handleToggleSubVaultPause = (subVaultId: string) => {
+    setSubVaultList((prev) =>
+      prev.map((sv) => {
+        if (sv.id === subVaultId) {
+          const nextState = !sv.paused;
+          onLog(
+            `[${new Date().toLocaleTimeString()}] [SUB-VAULT GOVERNANCE] ${sv.name} (${sv.id}) emergency pause set to: ${
+              nextState ? "PAUSED (Redemptions queued)" : "ACTIVE (Normal ops)"
+            }`
+          );
+          return { ...sv, paused: nextState };
+        }
+        return sv;
+      })
+    );
   };
 
   return (
@@ -824,7 +895,150 @@ export default function VaultCockpitBackside({
           </form>
         </div>
 
-        {/* 1.6 & 1.7 Dual Strategy Sockets (Pluggable Black-Box Encapsulation) */}
+        {/* 1.6 Veda Multi-Curator & Whitelabel Sub-Vault Registry (Option B) */}
+        <div
+          id="safe-sub-vaults"
+          className="p-6 rounded-3xl border transition shadow-sm space-y-5 card-surface"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/60 gap-2">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold">
+                <Layers className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">
+                    {lang === "zh" ? "1.6 机构多策展人与白标子金库注册中心 (Veda 架构规范)" : "1.6 Veda Multi-Curator & Whitelabel Sub-Vault Registry"}
+                  </h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 font-mono font-bold border border-indigo-500/30">
+                    Option B · Smart Contract v2.1
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
+                  {lang === "zh"
+                    ? "借鉴 Veda 模块化分层：支持外部独立投研 (Steakhouse/Bitwise) 策展独立金库，各子金库硬性隔离债务上限 (Debt Ceiling) 与白名单资产。"
+                    : "Modular Sub-Vaults: Independent risk curators manage whitelabel vaults with isolated debt ceilings and permissioned market sockets."}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-[11px] px-2.5 py-1 rounded-lg well-inset font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                {subVaultList.length} Active Sub-Vaults
+              </span>
+            </div>
+          </div>
+
+          {/* Sub-Vaults Registry Cards */}
+          <div className="space-y-3">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+              {lang === "zh" ? "已挂载机构白标子金库 (Whitelabel Sub-Vaults)" : "Mounted Institutional Sub-Vaults"}
+            </span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {subVaultList.map((sv) => (
+                <div
+                  key={sv.id}
+                  className={`p-4 rounded-2xl border transition ${
+                    sv.paused
+                      ? "bg-rose-500/5 border-rose-500/30"
+                      : "well-inset border-slate-700/60"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <div className={`w-2.5 h-2.5 rounded-full ${sv.paused ? "bg-rose-500 animate-pulse" : "bg-emerald-500"}`} />
+                      <span className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                        {sv.name}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                      {sv.id}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-600 dark:text-slate-400 my-2.5">
+                    <div>
+                      <span className="text-[10px] block opacity-70">
+                        {lang === "zh" ? "策展人 (Curator):" : "Curator:"}
+                      </span>
+                      <span className="font-bold text-slate-900 dark:text-slate-200 truncate block">
+                        {sv.curator}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] block opacity-70">
+                        {lang === "zh" ? "分销伙伴 (Distributor):" : "Distributor:"}
+                      </span>
+                      <span className="font-bold text-slate-900 dark:text-slate-200 truncate block">
+                        {sv.partnerId}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] block opacity-70">
+                        {lang === "zh" ? "在管资产 / 债务上限:" : "Assets / Debt Ceiling:"}
+                      </span>
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400 block">
+                        ${(sv.assets / 1e6).toFixed(2)}M / ${(sv.maxDebt / 1e6).toFixed(2)}M
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] block opacity-70">
+                        {lang === "zh" ? "管理费 / 业绩分成:" : "Mgmt / Perf Fee:"}
+                      </span>
+                      <span className="font-bold text-cyan-600 dark:text-cyan-400 block">
+                        {sv.mgmtFee}% / {sv.perfFee}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-700/40 flex items-center justify-between">
+                    <span className={`text-[10px] font-mono font-bold ${sv.paused ? "text-rose-500" : "text-emerald-500"}`}>
+                      {sv.paused ? "● EMERGENCY PAUSED" : "● RUNNING (NORMAL)"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleToggleSubVaultPause(sv.id)}
+                      className={`px-3 py-1 rounded-lg text-[10px] font-bold font-mono transition cursor-pointer ${
+                        sv.paused
+                          ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                          : "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30"
+                      }`}
+                    >
+                      {sv.paused ? (lang === "zh" ? "解除冻结" : "Resume Sub-Vault") : (lang === "zh" ? "一键熔断冻结" : "Emergency Freeze")}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Curators Specification */}
+          <div className="pt-2 space-y-2">
+            <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+              {lang === "zh" ? "白名单策展人矩阵 (Approved Risk Curators)" : "Approved Risk Curators"}
+            </span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {curatorList.map((c) => (
+                <div key={c.id} className="p-3 rounded-xl well-inset text-xs space-y-1 font-mono">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 dark:text-slate-100 truncate">{c.name}</span>
+                    <span className="text-[10px] text-emerald-400">ACTIVE</span>
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{c.id}</div>
+                  <div className="flex justify-between text-[11px] pt-1">
+                    <span className="text-slate-500">Allocation Cap:</span>
+                    <span className="font-bold text-amber-500">${(c.cap / 1e6).toFixed(0)}M</span>
+                  </div>
+                  <div className="flex justify-between text-[11px]">
+                    <span className="text-slate-500">Fee Share:</span>
+                    <span className="font-bold text-cyan-400">{c.feeShare}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 1.7 & 1.8 Dual Strategy Sockets (Pluggable Black-Box Encapsulation) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Socket #1: NUSD Core Vault */}
           <div
@@ -837,7 +1051,7 @@ export default function VaultCockpitBackside({
                   <Plug className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">{lang === "zh" ? "1.6 NUSD 生息策略插座 #1" : "1.6 NUSD Strategy Socket #1"}</h4>
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">{lang === "zh" ? "1.7 NUSD 生息策略插座 #1" : "1.7 NUSD Strategy Socket #1"}</h4>
                   <span className="text-[11px] text-slate-600 dark:text-slate-400 font-mono font-medium">GOSUN-NUSD-SOCKET-01</span>
                 </div>
               </div>
@@ -901,7 +1115,7 @@ export default function VaultCockpitBackside({
                   <Plug className="w-4 h-4" />
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">{lang === "zh" ? "1.7 全天候策略插座 #2" : "1.7 All-Weather Strategy Socket #2"}</h4>
+                  <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">{lang === "zh" ? "1.8 全天候策略插座 #2" : "1.8 All-Weather Strategy Socket #2"}</h4>
                   <span className="text-[11px] text-slate-600 dark:text-slate-400 font-mono font-medium">GOSUN-ALLWEATHER-SOCKET-02</span>
                 </div>
               </div>

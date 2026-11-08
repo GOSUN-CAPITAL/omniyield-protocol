@@ -4,6 +4,27 @@
 
 ---
 
+## [v2.2.0] - 2026-11-08 · Veda 多策展人与机构白标子金库架构 (Option B & Cross-Chain Solidification)
+
+### 🌟 核心突破与智能合约升级 (Smart Contract & Institutional Cockpit)
+- **Veda 多策展人与独立风控注册中心 (Multi-Curator Registry)**：
+  - 在 NEAR 智能合约 (`omniflow_vault.wasm`) 引入 `CuratorConfig` 与 `register_curator` / `update_curator_limits` / `get_curators` 接口。
+  - 支持外部独立投研机构（如 Steakhouse Financial、Bitwise RWA、Autonomous AI Agents）成为持牌风控策展人，分配硬性风险总仓位额度（Allocation Cap）与底层生息市场白名单，享受独立的业绩分成比例（Fee Share Bps）。
+- **机构级白标子金库注册中心 (Whitelabel Sub-Vault Registry)**：
+  - 合约新增 `WhitelabelSubVault` 结构与 `create_sub_vault` / `set_sub_vault_pause` / `reallocate_sub_vault` / `get_all_sub_vaults` 方法。
+  - 支持 B2B 合作伙伴与分销机构拥有完全隔离的子金库（例如 `Steakhouse USD Core Alpha` 与 `Bitwise All-Weather RWA Institutional`）。
+  - **核心不变性与风险隔离 (Strict Risk Invariant)**：各子金库独立设定债务上限 (`max_debt_ceiling`) 与市场白名单，调仓严格限制在子金库资产边界内，杜绝交叉感染。
+- **机构后台全维可视化与应急控制台 (Section 1.6 Cockpit View)**：
+  - 在 `VaultCockpitBackside.tsx` 深度呈现 Section 1.6 **`机构多策展人与白标子金库注册中心`**。
+  - 动态展示各子金库在管资产、债务上限、分销伙伴标识、管理与业绩费率。
+  - 集成一键应急熔断（Emergency Pause / Freeze）与状态控制开关。
+- **全链账户跨链状态与主权账本永久固化 (Cross-Chain Balance Solidification)**：
+  - 深度加固双金库主权账本 `vaultLedger.ts`：支持 Solana 地址前缀模糊与精确双重映射，杜绝大小写或截断引发的不一致。
+  - 消除 `NearAICopilot.tsx` 中并发调用导致的余额覆盖竞态问题。
+  - 确保从 Solana Phantom、EVM MetaMask 存入 5 USDC 铸造 NUSD 后，钱包 USDC 真实扣减（20 -> 15），NUSD 份额（5.0000）与持仓市值（$5.24）在全站（顶部导航、账户抽屉、投资组合、兑换面板）绝对同构且刷新永久留存。
+
+---
+
 ## [v2.1.0] - 2026-11-08 · 企业级嵌入式收益堆栈 (Enterprise Earn B2B SDK)
 
 ### 🌟 核心突破与 B2B 商业化落地 (Enterprise Milestones)

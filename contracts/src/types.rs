@@ -61,3 +61,35 @@ pub struct FeeConfig {
     pub performance_fee_recipient: Option<AccountId>,
     pub management_fee_recipient: Option<AccountId>,
 }
+
+/// Multi-Curator Configuration & Risk Limit Specification (Veda Paradigm)
+#[near(serializers = [borsh, json])]
+#[derive(Clone, Debug, PartialEq)]
+pub struct CuratorConfig {
+    pub curator_id: AccountId,
+    pub name: String,
+    pub is_active: bool,
+    pub max_allocation_cap: U128,        // Hard risk ceiling this curator is permitted to manage
+    pub approved_markets: Vec<MarketId>, // Whitelisted strategy markets
+    pub fee_share_bps: u32,              // Share of performance fee (e.g. 3000 bps = 30%)
+    pub registered_at_block: u64,
+}
+
+/// Institutional Whitelabel Sub-Vault Specification
+#[near(serializers = [borsh, json])]
+#[derive(Clone, Debug, PartialEq)]
+pub struct WhitelabelSubVault {
+    pub sub_vault_id: String,                   // Unique identifier (e.g. "vault_steakhouse_usdc")
+    pub name: String,                           // Display name (e.g. "Steakhouse USD Core Alpha")
+    pub curator_id: AccountId,                  // Managing curator (e.g. "curator.omniyield-vault.testnet")
+    pub distributor_partner_id: Option<String>, // Associated B2B distributor (e.g. "partner_phantom_alpha")
+    pub total_assets: U128,                     // Total underlying assets in sub-vault
+    pub total_shares: U128,                     // Total minted shares in sub-vault
+    pub management_fee_bps: u32,                // Management fee in basis points (max 500 = 5%)
+    pub performance_fee_bps: u32,               // Performance fee in basis points (max 3000 = 30%)
+    pub fee_recipient: AccountId,               // Recipient of sub-vault fees
+    pub allowed_markets: Vec<MarketId>,         // Whitelisted market IDs
+    pub max_debt_ceiling: U128,                 // Maximum asset capacity (Debt Ceiling)
+    pub is_paused: bool,                        // Emergency pause switch
+    pub created_at_block: u64,
+}
