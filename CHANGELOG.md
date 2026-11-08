@@ -4,6 +4,26 @@
 
 ---
 
+## [v2.4.0] - 2026-11-08 · 对标 NEAR 官方规范升级：NEAR AI Cloud 多轮记忆与机密计算、NEAR Intents 撮合规范与 NEP-366 无感代付
+
+### 🌟 核心突破与官方生态标准对齐 (Official NEAR Ecosystem Alignment)
+- **NEAR AI Cloud 原生接入与深度升维 (`docs.near.ai`)**：
+  - **导入官方最新 API 凭证**：配置官方 NEAR AI Cloud 高性能计算密钥，打通 `https://cloud-api.near.ai/v1` 生产端点。
+  - **多轮对话上下文记忆 (Multi-Turn History)**：在 `NearAICopilot.tsx` 与 `/api/ai/chat` 间实现上下文回溯通道，完整支持 OpenAI-compatible 规范，Copilot 具备跨轮次意图理解能力。
+  - **官方模型矩阵智能级联容错 (Model Cascading)**：首选 `z-ai/glm-5.3-flash`（低延迟/高精度金融语义），智能降级至 `deepseek-ai/DeepSeek-V4.1-Flash-1017` 与 `google/gemini-2.5-flash`，彻底消除单点网络抖动。
+  - **硬件级机密计算背书 (Confidential Computing TEE)**：在 AI 智能助手控制面板新增 **`NEAR AI TEE 🛡️`** 认证标识，突出硬件级安全隔离推理（Intel TDX / NVIDIA TEE），提升机构合规可信度。
+- **NEAR Intents 意图清算规范全面对齐 (`docs.near-intents.org`)**：
+  - **三位一体 AI 提示词规范化**：将 Expression Layer 意图签名、1Click RFQ 离链竞价、Verifier 代币差额守恒（Token Diffs）定律以及 Anti-MEV 防夹机制深度融入系统提示词。
+  - **兑换端履约凭证升维 (`ExchangeView.tsx`)**：在原子结算成功卡片中，加入直连官方规范文档 `docs.near-intents.org` 与 NearBlocks 浏览器双重验证链接。
+  - **客服智能体知识库更新**：权威解析 16 链免桥意图直达的数学守恒机制，消除用户对传统跨链桥丢币的顾虑。
+- **NEAR 开发者标准协议深度合规 (`docs.near.org`)**：
+  - **NEP-366 元交易代付规范 (Meta Transactions)**：在 `/api/transact` 中正式规范化 `NEP-366 Gas Sponsored via Relayer` 回执，明确全链入金与金库份额铸造对终端用户实现 100% 零 Gas 摩擦（$0.00 Gasless）。
+  - **白皮书技术架构图与合规陈述升级 (`docs/WHITEPAPER.md`)**：
+    - Tier 2 核心结缔层扩充：正式标明 **NEP-366 元交易中继**、**NEAR Chain Signatures (`v1.signer` 阈值 MPC 网络)** 以及 **Nightshade 2.0 无状态验证 (Stateless Validation)** 机制。
+    - 规范性引用更新：正式纳入 **NEP-145**（存储质押管理规范）与 **NEP-366**，与 ERC-4626 形成跨链双重对标。
+
+---
+
 ## [v2.3.0] - 2026-11-08 · “自营+TO B”战略定位确立、NEAR自营中枢+多链加盟拓扑与白皮书v2.2.0发布
 
 ### 🌟 核心突破与对外材料升维 (Institutional Deck & Whitepaper v2.2.0)
