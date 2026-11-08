@@ -4,6 +4,24 @@
 
 ---
 
+## [v2.3.0] - 2026-11-08 · 项目白皮书全面升级与机构融资商业材料发布 (Option C Release)
+
+### 🌟 核心突破与对外材料升维 (Institutional Deck & Whitepaper v2.2.0)
+- **技术白皮书全面升维至 v2.2.0 (`docs/WHITEPAPER.md`)**：
+  - 核心定义升级：将 OmniYield 定位为**面向 Web3 钱包与金融科技的“全链企业级嵌入式收益堆栈”（Enterprise-Grade Embedded Earn Stack）**。
+  - 完整引入 **Veda 4 层解耦架构**（分发层、金库结缔组织层、策展风控层、底层策略插座层）。
+  - 深度扩充**双金库矩阵**：`NUSD` 核心借贷利差金库（11.84% APY）与 `OmniUSDC` 全天候宏观平价金库（16.40% APY，四大宏观象限数学映射与夏普比率推导）。
+  - 详尽阐释 **Multi-Curator 白标子金库机制**：债务上限硬隔离不变性证明、策展人链上业绩分成公式、4 权分立治理矩阵与 24h 时间锁防护。
+  - 全链复式记账法（Double-Entry Accounting）与无桥意图清算证明。
+- **机构融资商业 Pitch Deck 归档发布 (`docs/INSTITUTIONAL_PITCH_DECK.md`)**：
+  - **核心叙事与投资亮点**：聚焦 \$170B+ 闲置稳定币与 \$5B+ 爆发式增长的 Embedded Earn 蓝海赛道。
+  - **B2B2C 商业模式与单车经济模型**：为分发商（如 Phantom、OKX、新银行）提供零代码集成与每年 **0.35% TVL 返佣现金流**测算表（$10M TVL 获 \$35K/年，$100M TVL 获 \$350K/年）。
+  - **全球竞品多维对比矩阵**：对比 Aave/Compound、Yearn、Ethena USDe、Veda，确立 OmniYield 在链抽象无桥结算、Gas 纯代付、双金库矩阵与 AI 意图 Copilot 上的绝对代际护城河。
+  - **财务测算与阶段估值模型**：推导 TVL 从 \$10M 跃升至 \$1B 阶段协议年度性能费、分发商分成与国库回购规模。
+  - **融资条款与资金用途规划**：明确 Seed / Strategic 轮 \$2.5M 融资方案及 MPC 优化、顶级审计、生态激励分布。
+
+---
+
 ## [v2.2.0] - 2026-11-08 · Veda 多策展人与机构白标子金库架构 (Option B & Cross-Chain Solidification)
 
 ### 🌟 核心突破与智能合约升级 (Smart Contract & Institutional Cockpit)
