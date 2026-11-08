@@ -505,7 +505,8 @@ bot.onText(/\\/earn/, (msg) => {
                   <div className={`flex items-center space-x-1.5 font-bold text-xs px-2 py-1 rounded-lg ${
                     widgetTheme === "beige" ? "bg-slate-100 text-slate-800" : "bg-slate-800 text-slate-200"
                   }`}>
-                    <img src="/logos/coins/usdc.svg" alt="USDC" className="w-4 h-4" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/logos/usdc.svg" alt="USDC" className="w-4 h-4 rounded-full" />
                     <span>USDC</span>
                   </div>
                 </div>
