@@ -4,6 +4,23 @@
 
 ---
 
+## [v2.1.0] - 2026-11-08 · 企业级嵌入式收益堆栈 (Enterprise Earn B2B SDK)
+
+### 🌟 核心突破与 B2B 商业化落地 (Enterprise Milestones)
+- **企业级嵌入式收益工坊上线 (Enterprise Earn Playground)**：
+  - 左侧主导航新增 **`企业接入 (B2B SDK)`** 核心入口，带专属高亮 B2B 徽章。
+  - 打造交互式嵌入组件实时调试台（Live Widget Simulator）：支持自定义分发商标识 (`Partner ID`)、目标公链 (`Solana` / `Arbitrum` / `Base`)、预设金库策略、主题皮肤与品牌主色调。
+- **全平台一键代码生成器 (Multi-Platform Code Generator)**：
+  - **React / Next.js**：`@omniyield/earn-sdk` 规范与组件代码一键复制。
+  - **HTML Script**：极简 `<script>` 标签零依赖 Web 嵌入，适配任意 Webflow 或官网页面。
+  - **Headless REST API**：提供带 `X-Partner-ID` 分发商追踪头的标准 cURL / TypeScript 调用示例。
+  - **Telegram Mini-App**：提供 TON / TG WebApp 专属 URL 路由规范。
+- **分发商收益测算器 (Partner Revenue & Retention Calculator)**：
+  - 动态滑动条模拟 $100K 至 $10M+ 客户资产规模。
+  - 实时演算每年为分发商带来的 **0.35% 年化分润现金流**（如 $1M TVL 每年获 $3,500 返佣，全自动化链上分润）。
+
+---
+
 ## [v2.0.0] - 2026-11-07 · 主链级跨链同构与永久主权账本规范 (Mainnet-Standard Release)
 
 ### 🌟 核心突破与主链级规范 (Key Milestones)
