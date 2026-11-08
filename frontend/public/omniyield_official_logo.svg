@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background: Pure Slate-950 Obsidian (#0B0F19) -->
+    <rect id="bgRect" width="512" height="512" rx="112" fill="#0B0F19"/>
+
+    <!-- Official NEAR Protocol Green Gradient (#00EC97 to #00C08B) -->
+    <linearGradient id="nearGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00FFA3"/>
+      <stop offset="50%" stop-color="#00EC97"/>
+      <stop offset="100%" stop-color="#00C08B"/>
+    </linearGradient>
+
+    <!-- OmniYield Sovereign Solar Gold Gradient for Center Core -->
+    <linearGradient id="sovereignGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF066"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Subtle Outer Border -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00EC97" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Background -->
+  <rect width="512" height="512" rx="112" fill="#0B0F19"/>
+  <rect width="510" height="510" x="1" y="1" rx="111" fill="none" stroke="url(#borderGrad)" stroke-width="2"/>
+
+  <!-- 2. Outer Diamond Rhombus: Official NEAR Protocol Green -->
+  <polygon points="256,96 416,256 256,416 96,256" 
+           fill="none" 
+           stroke="url(#nearGreenGrad)" 
+           stroke-width="36" 
+           stroke-linejoin="round"/>
+
+  <!-- 3. Center Core Circle: OmniYield Sovereign Solar Gold -->
+  <circle cx="256" cy="256" r="40" fill="url(#sovereignGoldGrad)"/>
+</svg>
