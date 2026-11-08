@@ -91,10 +91,34 @@ export default function EnterpriseEarnView({
   // Generate code snippet based on active configuration
   const getCodeSnippet = () => {
     if (activeCodeTab === "react") {
-      return `// 1. 安装 OmniYield 企业级嵌入式 SDK
+      return lang === "zh"
+        ? `// 1. 安装 OmniYield 企业级嵌入式 SDK
 npm install @omniyield/earn-sdk
 
 // 2. 在您的 Web3 钱包、新银行或 DeFi DApp 中引入组件
+import React from "react";
+import { OmniYieldEarnWidget } from "@omniyield/earn-sdk";
+
+export function PartnerEarnPage() {
+  return (
+    <div className="w-full max-w-md mx-auto p-4">
+      <OmniYieldEarnWidget
+        partnerId="${partnerId}"
+        chain="${selectedChain}"
+        defaultVault="${selectedVault}"
+        theme="${widgetTheme}"
+        accentColor="${accentColor}"
+        onDepositConfirmed={(receipt) => {
+          console.log("Customer earned yield:", receipt.sharesMinted);
+        }}
+      />
+    </div>
+  );
+}`
+        : `// 1. Install OmniYield Enterprise Earn SDK
+npm install @omniyield/earn-sdk
+
+// 2. Import component into your Web3 Wallet, Neo-Bank, or DeFi App
 import React from "react";
 import { OmniYieldEarnWidget } from "@omniyield/earn-sdk";
 
@@ -117,7 +141,18 @@ export function PartnerEarnPage() {
     }
 
     if (activeCodeTab === "html") {
-      return `<!-- OmniYield 零依赖极速 Web 嵌入代码 (支持 Webflow / 任意前端) -->
+      return lang === "zh"
+        ? `<!-- OmniYield 零依赖极速 Web 嵌入代码 (支持 Webflow / 任意前端) -->
+<div id="omniyield-earn-container" 
+     data-partner-id="${partnerId}"
+     data-chain="${selectedChain}"
+     data-vault="${selectedVault}"
+     data-theme="${widgetTheme}"
+     style="width: 100%; max-width: 440px; margin: 0 auto;">
+</div>
+
+<script src="https://cdn.omniyield.3691618.xyz/sdk/v2/earn-embed.min.js" async></script>`
+        : `<!-- OmniYield Zero-Dependency Embedded Script (Works with Webflow / Any HTML) -->
 <div id="omniyield-earn-container" 
      data-partner-id="${partnerId}"
      data-chain="${selectedChain}"
@@ -130,7 +165,8 @@ export function PartnerEarnPage() {
     }
 
     if (activeCodeTab === "api") {
-      return `// Headless REST API 集成（适用于后端与量化交易柜台）
+      return lang === "zh"
+        ? `// Headless REST API 集成（适用于后端与量化交易柜台）
 curl -X POST https://omniyield.3691618.xyz/api/transact \\
   -H "Content-Type: application/json" \\
   -H "X-Partner-ID: ${partnerId}" \\
@@ -143,10 +179,25 @@ curl -X POST https://omniyield.3691618.xyz/api/transact \\
     "destChain": "NEAR"
   }'
 
-// 返回值: 包含亚秒级 NEAR 意图清算哈希与分发商分润流水存证`;
+// 返回值: 包含亚秒级 NEAR 意图清算哈希与分发商分润流水存证`
+        : `// Headless REST API Integration (For Backend & Institutional Desks)
+curl -X POST https://omniyield.3691618.xyz/api/transact \\
+  -H "Content-Type: application/json" \\
+  -H "X-Partner-ID: ${partnerId}" \\
+  -d '{
+    "accountId": "0x9a920a096070b8fb8fde145197bcef40b0a3258a",
+    "action": "deposit",
+    "amount": 1000,
+    "originChain": "${selectedChain === "solana" ? "Solana" : "Arbitrum"}",
+    "vault": "${selectedVault}",
+    "destChain": "NEAR"
+  }'
+
+// Response: Includes sub-second NEAR intent settlement hash & partner revenue proof`;
     }
 
-    return `// Telegram WebApp (TON / Mini-App 一键嵌入)
+    return lang === "zh"
+      ? `// Telegram WebApp (TON / Mini-App 一键嵌入)
 const tgUrl = "https://omniyield.3691618.xyz/embed" + 
   "?partner=${partnerId}" +
   "&chain=${selectedChain}" +
@@ -159,6 +210,23 @@ bot.onText(/\\/earn/, (msg) => {
     reply_markup: {
       inline_keyboard: [[
         { text: "🚀 启动嵌入式理财", web_app: { url: tgUrl } }
+      ]]
+    }
+  });
+});`
+      : `// Telegram WebApp (TON / Mini-App Native Integration)
+const tgUrl = "https://omniyield.3691618.xyz/embed" + 
+  "?partner=${partnerId}" +
+  "&chain=${selectedChain}" +
+  "&theme=${widgetTheme}" +
+  "&vault=${selectedVault}";
+
+// Launch WebApp inside Telegram Bot chat:
+bot.onText(/\\/earn/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Launch Omni-Chain High-Yield Vaults:", {
+    reply_markup: {
+      inline_keyboard: [[
+        { text: "🚀 Open Embedded Earn", web_app: { url: tgUrl } }
       ]]
     }
   });
@@ -343,7 +411,9 @@ bot.onText(/\\/earn/, (msg) => {
                       : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
                   }`}
                 >
-                  <span className="block text-xs font-bold">OmniUSDC 全天候</span>
+                  <span className="block text-xs font-bold">
+                    {lang === "zh" ? "OmniUSDC 全天候" : "OmniUSDC All-Weather"}
+                  </span>
                   <span className={`block text-[11px] font-mono font-black ${
                     theme === "beige" ? "text-cyan-700" : "text-cyan-400"
                   }`}>16.40% APY</span>
@@ -361,7 +431,9 @@ bot.onText(/\\/earn/, (msg) => {
                       : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
                   }`}
                 >
-                  <span className="block text-xs font-bold">NUSD 核心借贷</span>
+                  <span className="block text-xs font-bold">
+                    {lang === "zh" ? "NUSD 核心借贷" : "NUSD Core Lending"}
+                  </span>
                   <span className={`block text-[11px] font-mono font-black ${
                     theme === "beige" ? "text-emerald-700" : "text-emerald-400"
                   }`}>11.84% APY</span>
